@@ -1,0 +1,47 @@
+{
+  "title": "Kubernetes Escape Room: The Locked Facility",
+  "description": "You wake up inside a mysterious facility. Five critical Kubernetes systems have failed. Fix them all in 20 minutes to escape.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "background.sh"
+    },
+    "steps": [
+      {
+        "title": "Scenario 1 - Reception Desk (Service)",
+        "text": "step1.md",
+        "verify": "verify1.sh"
+      },
+      {
+        "title": "Scenario 2 - Blueprint Cabinet (ConfigMap)",
+        "text": "step2.md",
+        "verify": "verify2.sh"
+      },
+      {
+        "title": "Scenario 3 - Storage Rack (PVC)",
+        "text": "step3.md",
+        "verify": "verify3.sh"
+      },
+      {
+        "title": "Scenario 4 - Security Vault (Secret)",
+        "text": "step4.md",
+        "verify": "verify4.sh"
+      },
+      {
+        "title": "Scenario 5 - Security Gate (NetworkPolicy)",
+        "text": "step5.md",
+        "verify": "verify5.sh"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "kubernetes-kubeadm-1node"
+  },
+  "interface": {
+    "layout": "ide-terminal"
+  },
+  "time": "20"
+}

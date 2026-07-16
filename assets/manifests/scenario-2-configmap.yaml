@@ -1,0 +1,54 @@
+# =====================================================================
+# Scenario 2 – Blueprint Cabinet (ConfigMap)
+# Bug: Deployment mounts ConfigMap "facility-blueprint" but the CM in
+#      the cluster is named "blueprint-cabinet" and is missing key
+#      BLUEPRINT_CODE.
+# Fix: Provide facility-blueprint CM with BLUEPRINT_CODE=ENG-WING-OPEN
+# =====================================================================
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: engineering
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: blueprint-cabinet          # BUG: wrong name (app expects facility-blueprint)
+  namespace: engineering
+data:
+  FACILITY_NAME: "Kubernetes Escape Complex"
+  # BLUEPRINT_CODE is missing on purpose
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: storage-door-controller
+  namespace: engineering
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: storage-door
+  template:
+    metadata:
+      labels:
+        app: storage-door
+    spec:
+      containers:
+        - name: app
+          image: busybox:1.36
+          command:
+            - /bin/sh
+            - -c
+            - |
+              while true; do
+                if [ -z "$BLUEPRINT_CODE" ]; then
+                  echo "[ERROR] Missing operating instructions (BLUEPRINT_CODE). Door stays closed."
+                else
+                  echo "[OK] Storage door unlocked with code: $BLUEPRINT_CODE"
+                fi
+                sleep 5
+              done
+          envFrom:
+            - configMapRef:
+                name: facility-blueprint
