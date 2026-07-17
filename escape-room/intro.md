@@ -1,34 +1,29 @@
 # 🔒 Kubernetes Escape Room: The Locked Facility
 
-You wake up inside a mysterious facility known as **The Kubernetes Escape Complex**.
+Welcome, escapee. You will play in **two windows**:
 
-A voice echoes through the intercom:
-
-> *"The exit door is locked. Five critical systems have failed throughout the facility.
-> To escape, you must restore each system and recover the hidden objects that will
-> grant access to the next area.
-> Every object represents a component of the facility — and a component of Kubernetes.
-> Solve all five challenges and the final exit door will unlock."*
+| Window | Purpose |
+|--------|---------|
+| 🎮 **Browser Game** | https://ralph-pam24.github.io/k8s-escape-room/game/ |
+| 💻 **This Terminal** | Fix the broken Kubernetes cluster |
 
 ---
 
-## 🗺️ Facility Map
+## 🎯 How to play
 
-| # | Room | Hidden Object | Kubernetes Resource |
-|---|------|---------------|---------------------|
-| 1 | Reception Desk | Reception Access Card | **Service** |
-| 2 | Blueprint Cabinet | Facility Blueprint | **ConfigMap** |
-| 3 | Archive Warehouse | Storage Expansion Plan | **PVC** |
-| 4 | Security Vault | Level 5 Security Badge | **Secret** |
-| 5 | Security Gate | Exit Door Activation | **NetworkPolicy** |
+1. Open the **game link** above in a new tab.
+2. When a scene appears in the game, come back **here** to fix the cluster.
+3. Fix the broken resource → click **CHECK**.
+4. The **CODE WORD** appears in the cluster output.
+5. Type the code word into the game to unlock the next room.
+6. Repeat for all 5 rooms → escape.
 
 ---
 
 ## ⏱️ Rules
 
 - **Time limit:** 20 minutes
-- **Players:** Solo
-- Fix each broken resource in order.
-- Each step has an automated verifier — solve it and the door opens to the next room.
+- **Solo player**
+- **5 rooms:** Service → ConfigMap → PVC → Secret → NetworkPolicy
 
-The cluster is being prepared now. When it's ready, click **START** to enter Room 1.
+The cluster is being prepared. Click **START** when you're ready.
