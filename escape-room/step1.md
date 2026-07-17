@@ -1,8 +1,6 @@
 # 🛎️ Room 1 — Reception Desk (Service)
 
-Return to your **browser game** for the story. This panel lists the cluster resources and the verification command.
-
----
+Return to your **browser game** for the story. This panel lists the cluster resources for this room.
 
 ## 📦 Resources in play
 
@@ -13,9 +11,11 @@ Return to your **browser game** for the story. This panel lists the cluster reso
 | Pod | `reception` | `visitor` |
 | Service | `reception` | `reception-desk` |
 
----
-
 ## ✅ Verification command
-kubectl -n reception exec visitor -- curl -s reception-desk
 
-If you reach the application and see a **Welcome** message, click **CHECK** to verify.
+Click the command to run it in the terminal:
+
+```bash
+kubectl -n reception exec visitor -- curl -s reception-desk
+```{{exec}}
+
