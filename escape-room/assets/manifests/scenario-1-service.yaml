@@ -1,7 +1,10 @@
 # =====================================================================
 # Scenario 1 – Reception Desk (Service)
 # Bug: Service selector does NOT match the pod labels.
-# Fix: Change Service.spec.selector to  app: reception
+# Fix: Update Service.spec.selector to match app: reception
+#      (or update Pod labels to match the Service selector).
+# Code word revealed only when Service correctly routes to the pods:
+#   RECEPTION-OPEN-42
 # =====================================================================
 apiVersion: v1
 kind: Namespace
@@ -27,7 +30,7 @@ spec:
         - name: web
           image: hashicorp/http-echo:0.2.3
           args:
-            - "-text=Welcome to the Reception Desk. Access Card Dispenser: UNLOCKED"
+            - "-text=Welcome to the Reception Desk. The receptionist hands you a card. \"Reception Desk at your service. Access Card Dispenser: UNLOCKED.\" CODE WORD: \"RECEPTION-OPEN-42\""
           ports:
             - containerPort: 5678
 ---
