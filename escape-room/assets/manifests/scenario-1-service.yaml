@@ -1,10 +1,8 @@
 # =====================================================================
 # Scenario 1 – Reception Desk (Service)
 # Bug: Service selector does NOT match the pod labels.
-# Fix: Update Service.spec.selector to match app: reception
-#      (or update Pod labels to match the Service selector).
-# Code word revealed only when Service correctly routes to the pods:
-#   RECEPTION-OPEN-42
+# Fix: Update Service.spec.selector to  app: reception
+# Full success reward embedded in the pod response.
 # =====================================================================
 apiVersion: v1
 kind: Namespace
@@ -28,9 +26,40 @@ spec:
     spec:
       containers:
         - name: web
-          image: hashicorp/http-echo:0.2.3
-          args:
-            - "-text=Welcome to the Reception Desk. The receptionist hands you a card. \"Reception Desk at your service. Access Card Dispenser: UNLOCKED.\" CODE WORD: \"RECEPTION-OPEN-42\""
+          image: busybox:1.36
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /www
+              cat > /www/index.html <<'PAGE'
+
+              =========================================================
+                            RECEPTION DESK - FACILITY LOBBY
+              =========================================================
+
+               ✅ You've resolved the issue.
+                  The visitor can now reach the correct department.
+
+               In Kubernetes, a Service uses a label selector to forward
+               traffic to matching Pods. When the selector matches the
+               Pod labels, traffic reaches healthy backends and the
+               application responds correctly.
+
+               ---------------------------------------------------------
+                            CODE: "RECEPTION-OPEN-42"
+               ---------------------------------------------------------
+
+               Copy the CODE WORD above and paste it into the browser
+               game to unlock the next room.
+
+               Click "Next Step" below (after clicking CHECK) to enter
+               Room 2.
+
+              =========================================================
+
+              PAGE
+              busybox httpd -f -p 5678 -h /www
           ports:
             - containerPort: 5678
 ---
