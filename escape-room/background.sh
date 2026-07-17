@@ -1,32 +1,36 @@
 #!/bin/bash
 # =====================================================================
-# background.sh - runs BEFORE the player sees Step 1.
-# Deploys the broken state for all 5 scenarios.
+# background.sh - deploys the broken state for all 5 rooms.
+# Pulls manifests from GitHub raw so no local file copy is needed.
 # =====================================================================
-set -e
+exec > /var/log/background.log 2>&1
+set -x
+echo "[$(date)] background.sh starting"
 
-until kubectl get nodes 2>/dev/null | grep -q " Ready"; do
-  sleep 2
+# Wait for cluster to be ready
+for i in {1..60}; do
+  if kubectl get nodes 2>/dev/null | grep -q " Ready"; then
+    break
+  fi
+  sleep 3
 done
 
-MANIFESTS=/opt/escape-room
-mkdir -p "$MANIFESTS"
-cp /root/assets/manifests/*.yaml "$MANIFESTS/" 2>/dev/null || true
+BASE=https://raw.githubusercontent.com/ralph-pam24/k8s-escape-room/main/escape-room/assets/manifests
 
 # Install Calico so NetworkPolicies are enforced (Scenario 5)
-if ! kubectl get pods -n kube-system 2>/dev/null | grep -q calico; then
-  kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/calico.yaml >/dev/null 2>&1 || true
-fi
+kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.27.0/manifests/calico.yaml || true
 
-kubectl apply -f "$MANIFESTS/scenario-1-service.yaml"
-kubectl apply -f "$MANIFESTS/scenario-2-configmap.yaml"
-kubectl apply -f "$MANIFESTS/scenario-3-pvc.yaml"
-kubectl apply -f "$MANIFESTS/scenario-4-secret.yaml"
-kubectl apply -f "$MANIFESTS/scenario-5-networkpolicy.yaml"
+# Apply all 5 broken scenarios
+kubectl apply -f $BASE/scenario-1-service.yaml
+kubectl apply -f $BASE/scenario-2-configmap.yaml
+kubectl apply -f $BASE/scenario-3-pvc.yaml
+kubectl apply -f $BASE/scenario-4-secret.yaml
+kubectl apply -f $BASE/scenario-5-networkpolicy.yaml
 
 cat >> /root/.bashrc <<'EOF'
 alias k=kubectl
 export do="--dry-run=client -o yaml"
 EOF
 
+echo "[$(date)] background.sh done"
 echo "done" > /opt/.escape-room-ready
