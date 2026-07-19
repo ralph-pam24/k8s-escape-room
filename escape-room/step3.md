@@ -1,53 +1,24 @@
-# 📦 Room 3 — Archive Warehouse (PVC)
+# 📦 Room 3 — Storage Rack (PVC)
 
-The Facility Blueprint marks a location: **Archive Warehouse - Storage
-Expansion Area**. You arrive to find towering shelves packed floor to
-ceiling. Boxes spill into the aisles. New records can't be filed —
-everything has stopped.
+Return to your **browser game** for the story. This panel lists the cluster resources for this room.
 
-An **Expansion Plan** is rumored to be hidden somewhere in the warehouse.
+## 📦 Resources in play
 
-## 📖 Story
+| Kind | Namespace | Name |
+|------|-----------|------|
+| Namespace | — | `archive` |
+| StorageClass | — | `expandable-storage` |
+| PersistentVolumeClaim | `archive` | `archive-rack` |
+| Deployment | `archive` | `archive-writer` |
 
-The archive writer keeps trying to store records but crashes with:
+The `archive-writer` pod keeps restarting. Investigate the pod, identify the cause of the failure, and get it into a stable Running state.
 
-> `No space left on device`
+## ✅ Verification command
 
-## 🧩 The Problem
+Once the pod is stable, run:
 
-- Deployment `archive-writer` runs in namespace `archive` ✅
-- It writes to a PVC called `archive-rack` ✅
-- The PVC is only **50Mi** — full within seconds ❌
+```bash
+kubectl -n archive exec deploy/archive-writer -- cat /data/expansion-plan.txt
+```{{exec}}
 
-Expand the PVC so writes succeed again.
-
-## 🔍 Investigate
-
-```
-kubectl -n archive get pvc
-kubectl -n archive logs deploy/archive-writer --tail=10
-kubectl get sc
-```
-
-## 🎯 Objective
-
-Expand `archive-rack` to at least **500Mi** and confirm the writer is
-successfully storing records again:
-
-```
-kubectl -n archive logs deploy/archive-writer --tail=5
-# expected:
-# [OK] Stored record N
-```
-
-> 💡 **Hint:** Patch the PVC:
-> ```
-> kubectl -n archive patch pvc archive-rack \
->   -p '{"spec":{"resources":{"requests":{"storage":"500Mi"}}}}'
-> ```
-> Then restart the pod so it picks up the new size:
-> ```
-> kubectl -n archive rollout restart deploy/archive-writer
-> ```
-
-Click **CHECK** to expand the shelves.
+If the file shows the **success message**, click **CHECK**.

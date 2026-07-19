@@ -1,7 +1,10 @@
 # =====================================================================
 # Scenario 3 – Storage Rack Expansion Plan (PVC)
-# Bug: PVC is only 50Mi. App fills it up -> "No space left on device".
-# Fix: Patch PVC to >=500Mi and restart the deployment.
+# Bug: PVC "archive-rack" is only 50Mi. Writer fills it -> exit 1 ->
+#      CrashLoopBackOff.
+# Fix: Expand PVC to anything greater than 50Mi and restart the
+#      deployment.
+# Reward: /data/expansion-plan.txt with code word EXPANSION-9K-VAULT.
 # =====================================================================
 apiVersion: v1
 kind: Namespace
@@ -11,9 +14,7 @@ metadata:
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
 metadata:
-  name: expandable
-  annotations:
-    storageclass.kubernetes.io/is-default-class: "true"
+  name: expandable-storage
 provisioner: rancher.io/local-path
 reclaimPolicy: Delete
 volumeBindingMode: WaitForFirstConsumer
@@ -26,10 +27,10 @@ metadata:
   namespace: archive
 spec:
   accessModes: ["ReadWriteOnce"]
-  storageClassName: expandable
+  storageClassName: expandable-storage
   resources:
     requests:
-      storage: 50Mi                 # BUG: too small
+      storage: 50Mi        # BUG: too small
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -38,6 +39,8 @@ metadata:
   namespace: archive
 spec:
   replicas: 1
+  strategy:
+    type: Recreate         # RWO PVC — avoid two pods mounting at once
   selector:
     matchLabels:
       app: archive-writer
@@ -50,19 +53,70 @@ spec:
         - name: writer
           image: busybox:1.36
           command:
-            - /bin/sh
+            - sh
             - -c
             - |
-              i=0
-              while true; do
-                i=$((i+1))
-                if dd if=/dev/zero of=/data/record-$i.bin bs=1M count=1 2>/tmp/err; then
-                  echo "[OK] Stored record $i"
-                else
-                  echo "[ERROR] $(cat /tmp/err)"
-                fi
-                sleep 2
-              done
+              AVAIL_KB=$(df -k /data | awk 'NR==2 {print $4}')
+              AVAIL_MB=$((AVAIL_KB / 1024))
+              echo "[INFO] Storage rack currently has ${AVAIL_MB}Mi of free space."
+
+              # Room 3 passes when the rack has been expanded beyond the
+              # initial 50Mi. We allow a small buffer (55Mi) for filesystem
+              # overhead so any real expansion is detected.
+              if [ "$AVAIL_MB" -le 55 ]; then
+                # Fill the rack until it errors out
+                i=0
+                while [ $i -lt 200 ]; do
+                  i=$((i+1))
+                  if ! dd if=/dev/zero of=/data/record-$i.bin bs=1M count=1 2>/tmp/err; then
+                    echo "[ERROR] Storage rack is full."
+                    echo "[ERROR] $(cat /tmp/err)"
+                    echo "[ERROR] Cannot store new records. Rack must be expanded."
+                    sleep 5
+                    exit 1
+                  fi
+                done
+                echo "[ERROR] Storage rack too small for archive operations."
+                sleep 5
+                exit 1
+              fi
+
+              # Rack was expanded — clean up old records, write reward
+              rm -f /data/record-*.bin
+
+              cat > /data/expansion-plan.txt <<'BOX'
+
+              =========================================================
+                            STORAGE RACK — ARCHIVE WAREHOUSE
+              =========================================================
+
+               ✅ You've resolved the issue.
+                  The storage racks have been expanded and new archive
+                  records can now be stored.
+
+               In Kubernetes, a PersistentVolumeClaim (PVC) requests
+               storage of a specific size. When applications outgrow
+               their claim, administrators can expand it (if the
+               StorageClass allows expansion) by patching the PVC's
+               requested storage, then restarting the pod so the
+               filesystem is resized.
+
+               ---------------------------------------------------------
+                            CODE: "EXPANSION-9K-VAULT"
+               ---------------------------------------------------------
+
+               Copy the CODE WORD above and paste it into the browser
+               game to unlock the next room.
+
+               Click "Next Step" below (after clicking CHECK) to enter
+               Room 4.
+
+              =========================================================
+
+              BOX
+
+              echo "[OK] Storage rack expanded. Expansion plan written to /data/expansion-plan.txt"
+              sleep infinity
           volumeMounts:
             - name: rack
               mountPath: /data
