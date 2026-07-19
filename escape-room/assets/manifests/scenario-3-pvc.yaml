@@ -1,15 +1,44 @@
 # =====================================================================
 # Scenario 3 – Storage Rack Expansion Plan (PVC)
-# Bug: PVC "archive-rack" is only 50Mi. Writer fills it -> exit 1 ->
-#      CrashLoopBackOff.
-# Fix: Expand PVC to anything greater than 50Mi and restart the
-#      deployment.
-# Reward: /data/expansion-plan.txt with code word EXPANSION-9K-VAULT.
+# Bug: PVC "archive-rack" is only 50Mi. Pod queries the K8s API for
+#      its own PVC spec and crashes if requested size is <= 50Mi.
+# Fix: Expand the PVC beyond 50Mi and restart the deployment.
+# Reward: /data/expansion-plan.txt with code EXPANSION-9K-VAULT.
 # =====================================================================
 apiVersion: v1
 kind: Namespace
 metadata:
   name: archive
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: archive-writer
+  namespace: archive
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: pvc-reader
+  namespace: archive
+rules:
+  - apiGroups: [""]
+    resources: ["persistentvolumeclaims"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: archive-writer-pvc-reader
+  namespace: archive
+subjects:
+  - kind: ServiceAccount
+    name: archive-writer
+    namespace: archive
+roleRef:
+  kind: Role
+  name: pvc-reader
+  apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
@@ -40,7 +69,7 @@ metadata:
 spec:
   replicas: 1
   strategy:
-    type: Recreate         # RWO PVC — avoid two pods mounting at once
+    type: Recreate
   selector:
     matchLabels:
       app: archive-writer
@@ -49,40 +78,44 @@ spec:
       labels:
         app: archive-writer
     spec:
+      serviceAccountName: archive-writer
       containers:
         - name: writer
-          image: busybox:1.36
+          image: curlimages/curl:8.4.0
           command:
             - sh
             - -c
             - |
-              AVAIL_KB=$(df -k /data | awk 'NR==2 {print $4}')
-              AVAIL_MB=$((AVAIL_KB / 1024))
-              echo "[INFO] Storage rack currently has ${AVAIL_MB}Mi of free space."
+              TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+              NS=$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace)
+              API=https://kubernetes.default.svc
 
-              # Room 3 passes when the rack has been expanded beyond the
-              # initial 50Mi. We allow a small buffer (55Mi) for filesystem
-              # overhead so any real expansion is detected.
-              if [ "$AVAIL_MB" -le 55 ]; then
-                # Fill the rack until it errors out
-                i=0
-                while [ $i -lt 200 ]; do
-                  i=$((i+1))
-                  if ! dd if=/dev/zero of=/data/record-$i.bin bs=1M count=1 2>/tmp/err; then
-                    echo "[ERROR] Storage rack is full."
-                    echo "[ERROR] $(cat /tmp/err)"
-                    echo "[ERROR] Cannot store new records. Rack must be expanded."
-                    sleep 5
-                    exit 1
-                  fi
-                done
-                echo "[ERROR] Storage rack too small for archive operations."
+              PVC_JSON=$(curl -sk -H "Authorization: Bearer $TOKEN" \
+                $API/api/v1/namespaces/$NS/persistentvolumeclaims/archive-rack)
+
+              # Extract requested storage (e.g. "50Mi", "500Mi", "1Gi")
+              SIZE=$(echo "$PVC_JSON" | grep -oE '"storage":"[0-9]+[A-Za-z]+"' \
+                | head -1 | sed 's/.*"storage":"\([^"]*\)".*/\1/')
+
+              echo "[INFO] Storage rack capacity: $SIZE"
+
+              # Normalize to Mi
+              NUM=$(echo "$SIZE" | grep -oE '[0-9]+')
+              UNIT=$(echo "$SIZE" | grep -oE '[A-Za-z]+')
+              case "$UNIT" in
+                Gi) MI=$((NUM * 1024)) ;;
+                Mi) MI=$NUM ;;
+                Ki) MI=$((NUM / 1024)) ;;
+                *)  MI=0 ;;
+              esac
+
+              if [ "$MI" -le 50 ]; then
+                echo "[ERROR] Storage rack full — only ${SIZE} capacity."
+                echo "[ERROR] Cannot store new archive records."
+                echo "[ERROR] Rack must be expanded."
                 sleep 5
                 exit 1
               fi
-
-              # Rack was expanded — clean up old records, write reward
-              rm -f /data/record-*.bin
 
               cat > /data/expansion-plan.txt <<'BOX'
 
@@ -115,7 +148,7 @@ spec:
 
               BOX
 
-              echo "[OK] Storage rack expanded. Expansion plan written to /data/expansion-plan.txt"
+              echo "[OK] Storage rack expanded to ${SIZE}."
               sleep infinity
           volumeMounts:
             - name: rack
