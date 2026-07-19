@@ -1,9 +1,10 @@
 # =====================================================================
 # Scenario 2 – Blueprint Cabinet (ConfigMap)
-# Bug: Deployment mounts ConfigMap "facility-blueprint" but the CM in
-#      the cluster is named "blueprint-cabinet" and is missing key
+# Bug: ConfigMap "facility-blueprint" exists but is missing the key
 #      BLUEPRINT_CODE.
-# Fix: Provide facility-blueprint CM with BLUEPRINT_CODE=ENG-WING-OPEN
+# Fix: Add key BLUEPRINT_CODE=ENG-WING-OPEN to the ConfigMap and
+#      restart the deployment.
+# Reward code word: BLUEPRINT-B7-DELTA (appears only after fix).
 # =====================================================================
 apiVersion: v1
 kind: Namespace
@@ -13,10 +14,11 @@ metadata:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: blueprint-cabinet          # BUG: wrong name (app expects facility-blueprint)
+  name: facility-blueprint
   namespace: engineering
 data:
   FACILITY_NAME: "Kubernetes Escape Complex"
+  WING_ID: "engineering"
   # BLUEPRINT_CODE is missing on purpose
 ---
 apiVersion: apps/v1
@@ -37,18 +39,52 @@ spec:
       containers:
         - name: app
           image: busybox:1.36
+          envFrom:
+            - configMapRef:
+                name: facility-blueprint
           command:
-            - /bin/sh
+            - sh
             - -c
             - |
               while true; do
                 if [ -z "$BLUEPRINT_CODE" ]; then
-                  echo "[ERROR] Missing operating instructions (BLUEPRINT_CODE). Door stays closed."
+                  echo "[ERROR] Missing operating instructions."
+                  echo "[ERROR] Required key:   BLUEPRINT_CODE"
+                  echo "[ERROR] Required value: ENG-WING-OPEN"
+                  echo "[ERROR] Storage doors will not open."
+                elif [ "$BLUEPRINT_CODE" = "ENG-WING-OPEN" ]; then
+                  cat <<'BOX'
+
+              =========================================================
+                            BLUEPRINT CABINET — ENGINEERING WING
+              =========================================================
+
+               ✅ You've resolved the issue.
+                  The storage-door controller now has its instructions
+                  and the Blueprint Cabinet unlocks.
+
+               In Kubernetes, a ConfigMap holds non-sensitive
+               configuration such as URLs, ports, and application
+               settings. Pods consume ConfigMaps via envFrom, env
+               valueFrom, or volume mounts. Missing keys leave apps
+               without the config they need to operate.
+
+               ---------------------------------------------------------
+                            CODE: "BLUEPRINT-B7-DELTA"
+               ---------------------------------------------------------
+
+               Copy the CODE WORD above and paste it into the browser
+               game to unlock the next room.
+
+               Click "Next Step" below (after clicking CHECK) to enter
+               Room 3.
+
+              =========================================================
+
+              BOX
                 else
-                  echo "[OK] Storage door unlocked with code: $BLUEPRINT_CODE"
+                  echo "[ERROR] Invalid BLUEPRINT_CODE: '$BLUEPRINT_CODE'"
+                  echo "[ERROR] Expected: ENG-WING-OPEN"
                 fi
                 sleep 5
               done
-          envFrom:
-            - configMapRef:
-                name: facility-blueprint
