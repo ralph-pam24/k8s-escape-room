@@ -1,7 +1,6 @@
 #!/bin/bash
 # Room 2 - Blueprint Cabinet (ConfigMap)
-# Verifies by checking pod logs for the code word.
-# On success, deploys Room 3.
+# Verifier passes when the pod is Running and logs contain the code word.
 
 for i in 1 2 3; do
   LOG=$(kubectl -n engineering logs deploy/storage-door-controller --tail=40 2>/dev/null)
@@ -14,5 +13,5 @@ for i in 1 2 3; do
   sleep 2
 done
 
-echo "❌ Blueprint Cabinet still locked. Check the pod logs and add the missing ConfigMap key."
+echo "❌ Blueprint Cabinet still locked. Investigate why the pod is failing."
 exit 1
