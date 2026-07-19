@@ -10,7 +10,7 @@ Return to your **browser game** for the story. This panel lists the cluster reso
 | Deployment | `engineering` | `storage-door-controller` |
 | ConfigMap | `engineering` | `facility-blueprint` |
 
-The storage-door controller pod is not healthy. Investigate the pod, identify the issue, and get it running.
+The `storage-door-controller` pod keeps restarting. Investigate the pod, identify the cause of the failure, and get it into a stable Running state.
 
 ## ✅ Verification command
 
