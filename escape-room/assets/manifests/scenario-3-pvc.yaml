@@ -93,8 +93,9 @@ spec:
               PVC_JSON=$(curl -sk -H "Authorization: Bearer $TOKEN" \
                 $API/api/v1/namespaces/$NS/persistentvolumeclaims/archive-rack)
 
-              # Extract requested storage (e.g. "50Mi", "500Mi", "1Gi")
-              SIZE=$(echo "$PVC_JSON" | grep -oE '"storage":"[0-9]+[A-Za-z]+"' \
+              # Strip whitespace so the regex matches regardless of JSON pretty-print
+              SIZE=$(echo "$PVC_JSON" | tr -d ' \n\t' \
+                | grep -oE '"storage":"[0-9]+[A-Za-z]+"' \
                 | head -1 | sed 's/.*"storage":"\([^"]*\)".*/\1/')
 
               echo "[INFO] Storage rack capacity: $SIZE"
