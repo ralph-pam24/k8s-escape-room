@@ -1,49 +1,23 @@
 # 🔐 Room 4 — Security Vault (Secret)
 
-Newly accessible archives point to the **Security Office**. Behind
-movable shelves you find a heavy **Security Vault**. It stores the
-credentials needed to activate the next layer of security.
+Return to your **browser game** for the story. This panel lists the cluster resources for this room.
 
-The vault exists — but the credentials inside are wrong.
+## 📦 Resources in play
 
-## 📖 Story
+| Kind | Namespace | Name |
+|------|-----------|------|
+| Namespace | — | `security` |
+| Deployment | `security` | `vault-client` |
+| Secret | `security` | `vault-credentials` |
 
-The `vault-client` pod reads a password from a mounted Secret and
-compares it with the token returned by the `auth-service`.
-Right now, authentication is failing.
+The `vault-client` pod cannot start. Investigate the pod, get it into a stable Running state, then follow the instructions it prints.
 
-## 🧩 The Problem
+## ✅ Verification command
 
-- Storage works ✅
-- Configuration is correct ✅
-- Authentication to the backend **fails** ❌
+Once you've opened the vault, run:
 
-The `vault-credentials` Secret currently holds the password **`guest`**,
-but `auth-service` expects **`level5-badge`**.
+```bash
+kubectl -n security logs deploy/vault-client --tail=40
+```{{exec}}
 
-## 🔍 Investigate
-
-```
-kubectl -n security get secret vault-credentials -o yaml
-kubectl -n security logs deploy/vault-client --tail=5
-kubectl -n security exec deploy/vault-client -- cat /etc/vault/password
-```
-
-## 🎯 Objective
-
-Update the Secret so the client logs show:
-
-```
-[OK] Vault opened. Level 5 Security Badge released.
-```
-
-> 💡 **Hint:** Recreate the Secret with the correct password:
-> ```
-> kubectl -n security delete secret vault-credentials
-> kubectl -n security create secret generic vault-credentials \
->   --from-literal=username=admin \
->   --from-literal=password=level5-badge
-> kubectl -n security rollout restart deploy/vault-client
-> ```
-
-Click **CHECK** to open the vault.
+If the logs show the **success message with the code word**, click **CHECK**.
