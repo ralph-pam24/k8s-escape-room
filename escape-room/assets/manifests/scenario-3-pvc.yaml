@@ -1,9 +1,8 @@
 # =====================================================================
-# Scenario 3 – Storage Rack Expansion Plan (PVC)
-# Bug: PVC "archive-rack" is only 50Mi. Pod crashes when requested
-#      size is <= 50Mi.
+# Scenario 3 - Storage Rack Expansion Plan (PVC)
+# Bug: PVC archive-rack is only 50Mi.
 # Fix: Expand PVC beyond 50Mi and restart deployment.
-# Reward: /reward/expansion-plan.txt with code EXPANSION-9K-VAULT.
+# Reward code: EXPANSION-9K-VAULT
 # =====================================================================
 apiVersion: v1
 kind: Namespace
@@ -49,7 +48,6 @@ data:
     2026-07-21T02:18:42Z INFO  archive-writer v3.2.1 starting
     2026-07-21T02:18:42Z INFO  Loading archive index
     2026-07-21T02:18:43Z INFO  Storage volume mounted at /data
-    2026-07-21T02:18:43Z INFO  Archive capacity detected: expanded
     2026-07-21T02:18:44Z INFO  Storage expansion detected
     2026-07-21T02:18:44Z INFO  Rebuilding archive catalog
     2026-07-21T02:18:45Z INFO  Archive services online
@@ -58,25 +56,24 @@ data:
                 STORAGE RACK - ARCHIVE WAREHOUSE
     =========================================================
 
-     You've resolved the issue.
+     You have resolved the issue.
      The storage racks have been expanded and new archive
      records can now be stored.
 
-     In Kubernetes, a PersistentVolumeClaim (PVC) requests
+     In Kubernetes, a PersistentVolumeClaim requests
      storage of a specific size. When applications outgrow
-     their claim, administrators can expand it (if the
-     StorageClass allows expansion) by patching the PVC's
-     requested storage, then restarting the pod so the
-     filesystem is resized.
+     their claim, administrators can expand it by patching
+     the PVC and restarting the pod so the filesystem is
+     resized.
 
      ---------------------------------------------------------
-                  CODE: "EXPANSION-9K-VAULT"
+                  CODE: EXPANSION-9K-VAULT
      ---------------------------------------------------------
 
      Copy the CODE WORD above and paste it into the browser
      game to unlock the next room.
 
-     Click "Next Step" below (after clicking CHECK) to enter
+     Click Next Step below after clicking CHECK to enter
      Room 4.
 
     =========================================================
