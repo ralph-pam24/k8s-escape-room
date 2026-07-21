@@ -30,45 +30,39 @@ spec:
             - sh
             - -c
             - |
-              mkdir -p /www
+                mkdir -p /www
 
-              echo '
-              2026-07-21T02:14:31Z INFO  reception-api v1.8.2 starting
-              2026-07-21T02:14:31Z INFO  Loading routing configuration
-              2026-07-21T02:14:32Z INFO  Service endpoint registration complete
-              2026-07-21T02:14:32Z INFO  Backend pods discovered: 2
-              2026-07-21T02:14:32Z INFO  Health checks passed
-              2026-07-21T02:14:33Z INFO  Visitor request accepted
-              2026-07-21T02:14:33Z INFO  Routing visitor to Reception Desk
+                cat > /www/index.html <<'EOF'
+          2026-07-21T02:14:31Z INFO  reception-api v1.8.2 starting
+          2026-07-21T02:14:31Z INFO  Loading routing configuration
+          2026-07-21T02:14:32Z INFO  Service endpoint registration complete
+          2026-07-21T02:14:32Z INFO  Backend pods discovered: 2
+          2026-07-21T02:14:32Z INFO  Health checks passed
+          2026-07-21T02:14:33Z INFO  Visitor request accepted
+          2026-07-21T02:14:33Z INFO  Routing visitor to Reception Desk
 
-              =========================================================
-                            RECEPTION DESK - FACILITY LOBBY
-              =========================================================
+          =========================================================
+                        RECEPTION DESK - FACILITY LOBBY
+          =========================================================
 
-               ✅ You've resolved the issue.
-                  The visitor can now reach the correct department.
+          ✅ You've resolved the issue.
+          The visitor can now reach the correct department.
 
-               In Kubernetes, a Service uses a label selector to
-               forward traffic to matching Pods. When the selector
-               matches the Pod labels, traffic reaches healthy
-               backends and the application responds correctly.
+          In Kubernetes, a Service uses a label selector to
+          forward traffic to matching Pods. When the selector
+          matches the Pod labels, traffic reaches healthy
+          backends and the application responds correctly.
 
-               ---------------------------------------------------------
-                            CODE: "RECEPTION-OPEN-42"
-               ---------------------------------------------------------
+          ---------------------------------------------------------
+          CODE: "RECEPTION-OPEN-42"
+          ---------------------------------------------------------
 
-               Copy the CODE WORD above and paste it into the browser
-               game to unlock the next room.
+          Copy the CODE WORD above and paste it into the browser game.
 
-               Click "Next Step" below (after clicking CHECK) to enter
-               Room 2.
+          =========================================================
+          EOF
 
-              =========================================================
-              ' > /www/index.html
-
-              busybox httpd -f -p 5678 -h /www
-          ports:
-            - containerPort: 5678
+                busybox httpd -f -p 5678 -h /www
 ---
 apiVersion: v1
 kind: Service
