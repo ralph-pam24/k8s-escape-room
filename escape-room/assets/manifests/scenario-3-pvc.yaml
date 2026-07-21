@@ -1,8 +1,9 @@
 # =====================================================================
 # Scenario 3 – Storage Rack Expansion Plan (PVC)
-# Bug: PVC "archive-rack" is only 50Mi.
+# Bug: PVC "archive-rack" is only 50Mi. Pod crashes when requested
+#      size is <= 50Mi.
 # Fix: Expand PVC beyond 50Mi and restart deployment.
-# Reward: /data/expansion-plan.txt with code EXPANSION-9K-VAULT.
+# Reward: /reward/expansion-plan.txt with code EXPANSION-9K-VAULT.
 # =====================================================================
 apiVersion: v1
 kind: Namespace
@@ -37,6 +38,48 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: pvc-reader
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: archive-reward
+  namespace: archive
+data:
+  expansion-plan.txt: |
+    2026-07-21T02:18:42Z INFO  archive-writer v3.2.1 starting
+    2026-07-21T02:18:42Z INFO  Loading archive index
+    2026-07-21T02:18:43Z INFO  Storage volume mounted at /data
+    2026-07-21T02:18:43Z INFO  Archive capacity detected: expanded
+    2026-07-21T02:18:44Z INFO  Storage expansion detected
+    2026-07-21T02:18:44Z INFO  Rebuilding archive catalog
+    2026-07-21T02:18:45Z INFO  Archive services online
+
+    =========================================================
+                STORAGE RACK - ARCHIVE WAREHOUSE
+    =========================================================
+
+     You've resolved the issue.
+     The storage racks have been expanded and new archive
+     records can now be stored.
+
+     In Kubernetes, a PersistentVolumeClaim (PVC) requests
+     storage of a specific size. When applications outgrow
+     their claim, administrators can expand it (if the
+     StorageClass allows expansion) by patching the PVC's
+     requested storage, then restarting the pod so the
+     filesystem is resized.
+
+     ---------------------------------------------------------
+                  CODE: "EXPANSION-9K-VAULT"
+     ---------------------------------------------------------
+
+     Copy the CODE WORD above and paste it into the browser
+     game to unlock the next room.
+
+     Click "Next Step" below (after clicking CHECK) to enter
+     Room 4.
+
+    =========================================================
 ---
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
@@ -85,96 +128,53 @@ spec:
             - sh
             - -c
             - |
+              TS() { date -u '+%Y-%m-%dT%H:%M:%SZ'; }
               TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
               NS=$(cat /var/run/secrets/kubernetes.io/serviceaccount/namespace)
               API=https://kubernetes.default.svc
-
-              PVC_JSON=$(curl -sk -H "Authorization: Bearer $TOKEN" \
-                $API/api/v1/namespaces/$NS/persistentvolumeclaims/archive-rack)
-
-              SIZE=$(echo "$PVC_JSON" | tr -d ' \n\t' \
-                | grep -oE '"storage":"[0-9]+[A-Za-z]+"' \
-                | head -1 | sed 's/.*"storage":"\([^"]*\)".*/\1/')
-
+              PVC_JSON=$(curl -sk -H "Authorization: Bearer $TOKEN" $API/api/v1/namespaces/$NS/persistentvolumeclaims/archive-rack)
+              SIZE=$(echo "$PVC_JSON" | tr -d ' \n\t' | grep -oE '"storage":"[0-9]+[A-Za-z]+"' | head -1 | sed 's/.*"storage":"\([^"]*\)".*/\1/')
               NUM=$(echo "$SIZE" | grep -oE '[0-9]+')
               UNIT=$(echo "$SIZE" | grep -oE '[A-Za-z]+')
-
               case "$UNIT" in
                 Gi) MI=$((NUM * 1024)) ;;
                 Mi) MI=$NUM ;;
                 *) MI=0 ;;
               esac
-
               if [ "$MI" -le 50 ]; then
-                echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') INFO  archive-writer v3.2.1 starting"
-                echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') INFO  Loading archive index"
-                echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') INFO  Storage volume mounted at /data"
-                echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') INFO  Archive capacity detected: ${SIZE}"
-                echo ""
-                echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') ERROR Failed to persist archive batch"
-                echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') ERROR write /data/archive-045.bin: no space left on device"
-                echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') ERROR Archive storage exhausted"
-                echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') ERROR Writer shutting down"
-                echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') INFO  Exit code: 1"
+                echo "$(TS) INFO  archive-writer v3.2.1 starting"
+                echo "$(TS) INFO  Loading archive index"
+                echo "$(TS) INFO  Storage volume mounted at /data"
+                echo "$(TS) INFO  Archive capacity detected: ${SIZE}"
+                echo "$(TS) ERROR Failed to persist archive batch"
+                echo "$(TS) ERROR write /data/archive-045.bin: no space left on device"
+                echo "$(TS) ERROR Archive storage exhausted"
+                echo "$(TS) ERROR Writer shutting down"
+                echo "$(TS) INFO  Exit code: 1"
                 sleep 5
                 exit 1
               fi
-
-              echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') INFO  archive-writer v3.2.1 starting"
-              echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') INFO  Loading archive index"
-              echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') INFO  Storage volume mounted at /data"
-              echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') INFO  Archive capacity detected: ${SIZE}"
-              echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') INFO  Storage expansion detected"
-              echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') INFO  Rebuilding archive catalog"
-              echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') INFO  Archive services online"
+              echo "$(TS) INFO  archive-writer v3.2.1 starting"
+              echo "$(TS) INFO  Loading archive index"
+              echo "$(TS) INFO  Storage volume mounted at /data"
+              echo "$(TS) INFO  Archive capacity detected: ${SIZE}"
+              echo "$(TS) INFO  Storage expansion detected"
+              echo "$(TS) INFO  Rebuilding archive catalog"
+              echo "$(TS) INFO  Archive services online"
               echo ""
-
-              cat > /data/expansion-plan.txt <<'BOX'
-2026-07-21T02:18:42Z INFO  archive-writer v3.2.1 starting
-2026-07-21T02:18:42Z INFO  Loading archive index
-2026-07-21T02:18:43Z INFO  Storage volume mounted at /data
-2026-07-21T02:18:43Z INFO  Archive capacity detected: 100Mi
-2026-07-21T02:18:44Z INFO  Storage expansion detected
-2026-07-21T02:18:44Z INFO  Rebuilding archive catalog
-2026-07-21T02:18:45Z INFO  Archive services online
-
-=========================================================
-              STORAGE RACK — ARCHIVE WAREHOUSE
-=========================================================
-
- ✅ You've resolved the issue.
-    The storage racks have been expanded and new archive
-    records can now be stored.
-
-    In Kubernetes, a PersistentVolumeClaim (PVC) requests
-    storage of a specific size. When applications outgrow
-    their claim, administrators can expand it (if the
-    StorageClass allows expansion) by patching the PVC's
-    requested storage, then restarting the pod so the
-    filesystem is resized.
-
- ---------------------------------------------------------
-              CODE: "EXPANSION-9K-VAULT"
- ---------------------------------------------------------
-
-    Copy the CODE WORD above and paste it into the browser
-    game to unlock the next room.
-
-    Click "Next Step" below (after clicking CHECK) to enter
-    Room 4.
-
-=========================================================
-BOX
-
-              echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') INFO  Expansion plan written to /data/expansion-plan.txt"
-
+              cp /reward/expansion-plan.txt /data/expansion-plan.txt
+              cat /data/expansion-plan.txt
               sleep infinity
-
           volumeMounts:
             - name: rack
               mountPath: /data
-
+            - name: reward
+              mountPath: /reward
+              readOnly: true
       volumes:
         - name: rack
           persistentVolumeClaim:
             claimName: archive-rack
+        - name: reward
+          configMap:
+            name: archive-reward
