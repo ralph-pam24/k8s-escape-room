@@ -1,8 +1,7 @@
 # =====================================================================
 # Scenario 1 – Reception Desk (Service)
 # Bug: Service selector does NOT match the pod labels.
-# Fix: Update Service.spec.selector to  app: reception
-# Full success reward embedded in the pod response.
+# Fix: Update Service.spec.selector to app=reception
 # =====================================================================
 apiVersion: v1
 kind: Namespace
@@ -32,32 +31,41 @@ spec:
             - -c
             - |
               mkdir -p /www
-              cat > /www/index.html <<'PAGE'
 
-              =========================================================
-                            RECEPTION DESK - FACILITY LOBBY
-              =========================================================
+              cat > /www/index.html <<'EOF'
+2026-07-21T02:14:31Z INFO  reception-api v1.8.2 starting
+2026-07-21T02:14:31Z INFO  Loading routing configuration
+2026-07-21T02:14:32Z INFO  Service endpoint registration complete
+2026-07-21T02:14:32Z INFO  Backend pods discovered: 2
+2026-07-21T02:14:32Z INFO  Health checks passed
+2026-07-21T02:14:33Z INFO  Visitor request accepted
+2026-07-21T02:14:33Z INFO  Routing visitor to Reception Desk
 
-               ✅ You've resolved the issue.
-                  The visitor can now reach the correct department.
+=========================================================
+              RECEPTION DESK - FACILITY LOBBY
+=========================================================
 
-               In Kubernetes, a Service uses a label selector to forward
-               traffic to matching Pods. When the selector matches the
-               Pod labels, traffic reaches healthy backends and the
-               application responds correctly.
+ ✅ You've resolved the issue.
+    The visitor can now reach the correct department.
 
-               ---------------------------------------------------------
-                            CODE: "RECEPTION-OPEN-42"
-               ---------------------------------------------------------
+    In Kubernetes, a Service uses a label selector to
+    forward traffic to matching Pods. When the selector
+    matches the Pod labels, traffic reaches healthy
+    backends and the application responds correctly.
 
-               Copy the CODE WORD above and paste it into the browser
-               game to unlock the next room.
+ ---------------------------------------------------------
+              CODE: "RECEPTION-OPEN-42"
+ ---------------------------------------------------------
 
-               Click "CHECK" to verify and to enter Room 2.
+    Copy the CODE WORD above and paste it into 
+    the browser game to unlock the next room.
 
-              =========================================================
+    Click "Next Step" below (after clicking CHECK) 
+    to enter Room 2.
 
-              PAGE
+=========================================================
+EOF
+
               busybox httpd -f -p 5678 -h /www
           ports:
             - containerPort: 5678
@@ -68,9 +76,8 @@ metadata:
   name: reception-desk
   namespace: reception
 spec:
-  type: ClusterIP
   selector:
-    app: reception-desk       # BUG: wrong label, no pods match
+    app: reception-desk   # BUG: wrong selector
   ports:
     - port: 80
       targetPort: 5678
@@ -84,4 +91,4 @@ spec:
   containers:
     - name: curl
       image: curlimages/curl:8.4.0
-      command: ["sleep", "3600"]
+      command: ["sleep","3600"]

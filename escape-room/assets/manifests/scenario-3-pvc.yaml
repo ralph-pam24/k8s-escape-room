@@ -1,8 +1,7 @@
 # =====================================================================
 # Scenario 3 – Storage Rack Expansion Plan (PVC)
-# Bug: PVC "archive-rack" is only 50Mi. Pod queries the K8s API for
-#      its own PVC spec and crashes if requested size is <= 50Mi.
-# Fix: Expand the PVC beyond 50Mi and restart the deployment.
+# Bug: PVC "archive-rack" is only 50Mi.
+# Fix: Expand PVC beyond 50Mi and restart deployment.
 # Reward: /data/expansion-plan.txt with code EXPANSION-9K-VAULT.
 # =====================================================================
 apiVersion: v1
@@ -34,11 +33,10 @@ metadata:
 subjects:
   - kind: ServiceAccount
     name: archive-writer
-    namespace: archive
 roleRef:
+  apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: pvc-reader
-  apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: storage.k8s.io/v1
 kind: StorageClass
@@ -55,11 +53,12 @@ metadata:
   name: archive-rack
   namespace: archive
 spec:
-  accessModes: ["ReadWriteOnce"]
+  accessModes:
+    - ReadWriteOnce
   storageClassName: expandable-storage
   resources:
     requests:
-      storage: 50Mi        # BUG: too small
+      storage: 50Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -93,21 +92,17 @@ spec:
               PVC_JSON=$(curl -sk -H "Authorization: Bearer $TOKEN" \
                 $API/api/v1/namespaces/$NS/persistentvolumeclaims/archive-rack)
 
-              # Strip whitespace so the regex matches regardless of JSON pretty-print
               SIZE=$(echo "$PVC_JSON" | tr -d ' \n\t' \
                 | grep -oE '"storage":"[0-9]+[A-Za-z]+"' \
                 | head -1 | sed 's/.*"storage":"\([^"]*\)".*/\1/')
 
-              echo "[INFO] Storage rack capacity: $SIZE"
-
-              # Normalize to Mi
               NUM=$(echo "$SIZE" | grep -oE '[0-9]+')
               UNIT=$(echo "$SIZE" | grep -oE '[A-Za-z]+')
+
               case "$UNIT" in
                 Gi) MI=$((NUM * 1024)) ;;
                 Mi) MI=$NUM ;;
-                Ki) MI=$((NUM / 1024)) ;;
-                *)  MI=0 ;;
+                *) MI=0 ;;
               esac
 
               if [ "$MI" -le 50 ]; then
@@ -120,12 +115,11 @@ spec:
                 echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') ERROR write /data/archive-045.bin: no space left on device"
                 echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') ERROR Archive storage exhausted"
                 echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') ERROR Writer shutting down"
+                echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') INFO  Exit code: 1"
                 sleep 5
                 exit 1
               fi
 
-              cat > /data/expansion-plan.txt <<'BOX'
-              
               echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') INFO  archive-writer v3.2.1 starting"
               echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') INFO  Loading archive index"
               echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') INFO  Storage volume mounted at /data"
@@ -134,40 +128,52 @@ spec:
               echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') INFO  Rebuilding archive catalog"
               echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') INFO  Archive services online"
               echo ""
-              =========================================================
-                            STORAGE RACK — ARCHIVE WAREHOUSE
-              =========================================================
 
-               ✅ You've resolved the issue.
-                  The storage racks have been expanded and new archive
-                  records can now be stored.
+              cat > /data/expansion-plan.txt <<'BOX'
+2026-07-21T02:18:42Z INFO  archive-writer v3.2.1 starting
+2026-07-21T02:18:42Z INFO  Loading archive index
+2026-07-21T02:18:43Z INFO  Storage volume mounted at /data
+2026-07-21T02:18:43Z INFO  Archive capacity detected: 100Mi
+2026-07-21T02:18:44Z INFO  Storage expansion detected
+2026-07-21T02:18:44Z INFO  Rebuilding archive catalog
+2026-07-21T02:18:45Z INFO  Archive services online
 
-               In Kubernetes, a PersistentVolumeClaim (PVC) requests
-               storage of a specific size. When applications outgrow
-               their claim, administrators can expand it (if the
-               StorageClass allows expansion) by patching the PVC's
-               requested storage, then restarting the pod so the
-               filesystem is resized.
+=========================================================
+              STORAGE RACK — ARCHIVE WAREHOUSE
+=========================================================
 
-               ---------------------------------------------------------
-                            CODE: "EXPANSION-9K-VAULT"
-               ---------------------------------------------------------
+ ✅ You've resolved the issue.
+    The storage racks have been expanded and new archive
+    records can now be stored.
 
-               Copy the CODE WORD above and paste it into the browser
-               game to unlock the next room.
+    In Kubernetes, a PersistentVolumeClaim (PVC) requests
+    storage of a specific size. When applications outgrow
+    their claim, administrators can expand it (if the
+    StorageClass allows expansion) by patching the PVC's
+    requested storage, then restarting the pod so the
+    filesystem is resized.
 
-               Click "Next Step" below (after clicking CHECK) to enter
-               Room 4.
+ ---------------------------------------------------------
+              CODE: "EXPANSION-9K-VAULT"
+ ---------------------------------------------------------
 
-              =========================================================
+    Copy the CODE WORD above and paste it into the browser
+    game to unlock the next room.
 
-              BOX
+    Click "Next Step" below (after clicking CHECK) to enter
+    Room 4.
 
-              echo "[OK] Storage rack expanded to ${SIZE}."
+=========================================================
+BOX
+
+              echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') INFO  Expansion plan written to /data/expansion-plan.txt"
+
               sleep infinity
+
           volumeMounts:
             - name: rack
               mountPath: /data
+
       volumes:
         - name: rack
           persistentVolumeClaim:

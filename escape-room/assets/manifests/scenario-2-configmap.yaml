@@ -1,10 +1,7 @@
 # =====================================================================
 # Scenario 2 – Blueprint Cabinet (ConfigMap)
-# Bug: ConfigMap "facility-blueprint" exists but is missing the key
-#      BLUEPRINT_CODE.
-# Behavior: Pod exits with error -> CrashLoopBackOff until fixed.
-# Fix: Add BLUEPRINT_CODE=ENG-WING-OPEN to the ConfigMap and restart
-#      the deployment.
+# Bug: ConfigMap exists but is missing BLUEPRINT_CODE
+# Fix: Add BLUEPRINT_CODE=ENG-WING-OPEN and restart deployment
 # Reward code word: BLUEPRINT-B7-DELTA
 # =====================================================================
 apiVersion: v1
@@ -20,7 +17,7 @@ metadata:
 data:
   FACILITY_NAME: "Kubernetes Escape Complex"
   WING_ID: "engineering"
-  # BLUEPRINT_CODE is missing on purpose
+  # BLUEPRINT_CODE intentionally missing
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -48,47 +45,63 @@ spec:
             - -c
             - |
               if [ -z "$BLUEPRINT_CODE" ]; then
-                echo "[ERROR] Missing operating instructions."
-                echo "[ERROR] Required key:   BLUEPRINT_CODE"
-                echo "[ERROR] Required value: ENG-WING-OPEN"
-                echo "[ERROR] Storage doors will not open."
+                echo "2026-07-21T02:14:31Z INFO  storage-door-controller v2.7.1 starting"
+                echo "2026-07-21T02:14:31Z INFO  Loading engineering wing configuration"
+                echo "2026-07-21T02:14:32Z INFO  Blueprint source: facility-blueprint"
+                echo ""
+                echo "2026-07-21T02:14:32Z ERROR Configuration validation failed"
+                echo "2026-07-21T02:14:32Z ERROR Missing required parameter: BLUEPRINT_CODE"
+                echo "2026-07-21T02:14:32Z ERROR Expected value: ENG-WING-OPEN"
+                echo "2026-07-21T02:14:32Z ERROR Storage door initialization aborted"
+                echo "2026-07-21T02:14:32Z INFO  Exit code: 1"
                 sleep 5
                 exit 1
               fi
+
               if [ "$BLUEPRINT_CODE" != "ENG-WING-OPEN" ]; then
-                echo "[ERROR] Invalid BLUEPRINT_CODE: '$BLUEPRINT_CODE'"
-                echo "[ERROR] Expected: ENG-WING-OPEN"
+                echo "2026-07-21T02:14:32Z ERROR Configuration validation failed"
+                echo "2026-07-21T02:14:32Z ERROR Invalid BLUEPRINT_CODE"
+                echo "2026-07-21T02:14:32Z ERROR Expected value: ENG-WING-OPEN"
                 sleep 5
                 exit 1
               fi
+
+              echo "2026-07-21T02:18:42Z INFO  storage-door-controller v2.7.1 starting"
+              echo "2026-07-21T02:18:42Z INFO  Loading engineering wing configuration"
+              echo "2026-07-21T02:18:43Z INFO  Blueprint source: facility-blueprint"
+              echo "2026-07-21T02:18:43Z INFO  Blueprint code validated"
+              echo "2026-07-21T02:18:44Z INFO  Door controller initialized"
+              echo "2026-07-21T02:18:44Z INFO  Engineering wing access restored"
+              echo ""
+
               cat <<'BOX'
 
-              =========================================================
-                            BLUEPRINT CABINET — ENGINEERING WING
-              =========================================================
+=========================================================
+          BLUEPRINT CABINET — ENGINEERING WING
+=========================================================
 
-               ✅ You've resolved the issue.
-                  The storage-door controller now has its instructions
-                  and the Blueprint Cabinet unlocks.
+ ✅ You've resolved the issue.
+    The storage-door controller now has its instructions
+    and the Blueprint Cabinet unlocks.
 
-               In Kubernetes, a ConfigMap holds non-sensitive
-               configuration such as URLs, ports, and application
-               settings. Pods consume ConfigMaps via envFrom, env
-               valueFrom, or volume mounts. Missing keys leave apps
-               without the config they need to operate.
+    In Kubernetes, a ConfigMap holds non-sensitive
+    configuration such as URLs, ports, and application
+    settings. Pods consume ConfigMaps via envFrom, env
+    valueFrom, or volume mounts. Missing keys leave apps
+    without the config they need to operate.
 
-               ---------------------------------------------------------
-                            CODE: "BLUEPRINT-B7-DELTA"
-               ---------------------------------------------------------
+ ---------------------------------------------------------
+              CODE: "BLUEPRINT-B7-DELTA"
+ ---------------------------------------------------------
 
-               Copy the CODE WORD above and paste it into the browser
-               game to unlock the next room.
+    Copy the CODE WORD above and paste it into the browser
+    game to unlock the next room.
 
-               Click "Next Step" below (after clicking CHECK) to enter
-               Room 3.
+    Click "Next Step" below (after clicking CHECK) to enter
+    Room 3.
 
-              =========================================================
+=========================================================
 
-              BOX
-              # Stay Running once successful
+BOX
+
               sleep infinity
