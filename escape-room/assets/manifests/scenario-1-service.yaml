@@ -32,7 +32,7 @@ spec:
             - |
               mkdir -p /www
 
-              cat > /www/index.html <<'EOF'
+              echo '
               2026-07-21T02:14:31Z INFO  reception-api v1.8.2 starting
               2026-07-21T02:14:31Z INFO  Loading routing configuration
               2026-07-21T02:14:32Z INFO  Service endpoint registration complete
@@ -64,7 +64,7 @@ spec:
                Room 2.
 
               =========================================================
-              EOF
+              ' > /www/index.html
 
               busybox httpd -f -p 5678 -h /www
           ports:
