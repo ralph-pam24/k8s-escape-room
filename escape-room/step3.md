@@ -11,7 +11,8 @@ Return to your **browser game** for the story. This panel lists the cluster reso
 | PersistentVolumeClaim | `archive` | `archive-rack` |
 | Deployment | `archive` | `archive-writer` |
 
-The `archive-writer` pod keeps restarting. Investigate the pod, identify the cause of the failure, and get it into a stable Running state.
+The archive-writer workload is unstable and repeatedly restarting.
+Investigate the application and restore archive operations.
 
 ## ✅ Verification command
 

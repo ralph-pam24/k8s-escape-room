@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kubernetes Escape Room: The Locked Facility</title>
+  <!-- Updated v4: lighter Scenario 4 overlay and adjusted hotspot coordinates -->
+  <style>
+    :root{
+      --bg:#07090d; --panel:#101720; --panel2:#151f2b; --line:#355b7d;
+      --text:#e8f3ff; --muted:#a7bdd0; --dim:#73889a;
+      --blue:#39a9ff; --green:#4dffb5; --red:#ff4d6d; --yellow:#ffd166;
+    }
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;min-height:100vh;}
+    body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:99;background:linear-gradient(rgba(255,255,255,.025) 50%,transparent 50%);background-size:100% 4px;mix-blend-mode:screen;opacity:.35}
+    button{font:inherit}.screen{display:none!important;min-height:100vh}.screen.active{display:block!important}
+    .intro{position:relative;place-items:center;overflow:hidden;padding:40px 20px}.intro.active{display:grid!important}.intro-bg{position:absolute;inset:0;background:url('images/overview.jpg') center/cover no-repeat;filter:brightness(.78) contrast(1.08);}.intro-bg:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at center,rgba(8,12,18,.05),rgba(4,6,10,.62) 82%)}
+    .intro-card{position:relative;max-width:880px;width:100%;padding:34px;border:1px solid rgba(57,169,255,.35);background:rgba(7,10,16,.30);box-shadow:0 0 45px rgba(57,169,255,.18);backdrop-filter:blur(1px)}
+    .eyebrow{letter-spacing:4px;color:var(--green);font-size:12px;text-transform:uppercase}.title{font-size:clamp(34px,6vw,70px);font-weight:900;line-height:.95;margin:16px 0;color:#eaf6ff;text-shadow:0 0 30px rgba(57,169,255,.6)}
+    .subtitle{font-size:18px;color:var(--blue);letter-spacing:5px;text-transform:uppercase}.intercom{margin:26px 0;padding:18px 20px;border-left:4px solid var(--green);background:rgba(5,10,15,.28);line-height:1.65;color:var(--muted)}
+    .meta{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0}.pill{border:1px solid rgba(255,255,255,.18);padding:8px 12px;color:var(--muted);background:rgba(255,255,255,.04)}
+    .btn{border:1px solid var(--blue);background:rgba(57,169,255,.08);color:var(--text);padding:13px 22px;cursor:pointer;text-transform:uppercase;letter-spacing:2px;font-weight:700}.btn:hover{background:var(--blue);color:#03101a;box-shadow:0 0 22px rgba(57,169,255,.45)}.btn.secondary{border-color:#566b7b;background:transparent;color:var(--muted)}.btn:disabled,.btn.used{cursor:not-allowed;opacity:.55;border-color:#4b5965;color:#73889a;background:rgba(255,255,255,.03);box-shadow:none}.btn:disabled:hover,.btn.used:hover{background:rgba(255,255,255,.03);color:#73889a;box-shadow:none}
+    .hud{position:sticky;top:0;z-index:20;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;padding:12px 18px;background:rgba(7,9,13,.68);border-bottom:1px solid rgba(57,169,255,.22);backdrop-filter:blur(6px)}
+    .hud small{display:block;color:var(--dim);letter-spacing:2px;text-transform:uppercase;font-size:10px}.hud b{color:var(--blue)}.timer{font-size:24px;color:var(--green);font-weight:900}.inventory{display:flex;gap:8px;justify-content:flex-end}.slot{width:34px;height:34px;border:1px solid #3e5263;display:grid;place-items:center;background:rgba(255,255,255,.03)}.slot.filled{border-color:var(--green);box-shadow:0 0 14px rgba(77,255,181,.3)}
+    .game-wrap{max-width:1180px;margin:0 auto;padding:20px}.topline{display:flex;justify-content:space-between;gap:16px;align-items:end;margin-bottom:10px}.scene-name{font-weight:900;letter-spacing:2px;text-transform:uppercase;color:#dff2ff}.objective{color:var(--yellow);font-weight:700}.scene{position:relative;border:1px solid rgba(57,169,255,.28);background:#0e141c;box-shadow:0 0 32px rgba(0,0,0,.5);overflow:hidden}.scene img{display:block;width:100%;height:auto;user-select:none}.scene.theme-secret img{filter:brightness(1.10) contrast(0.80) saturate(0.80) sepia(.03)}.scene.theme-secret::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:2;background:radial-gradient(circle at 91% 42%,rgba(220,20,40,.12),transparent 16%),radial-gradient(circle at 52% 17%,rgba(20,80,120,.10),transparent 26%),linear-gradient(180deg,rgba(0,0,0,.02),rgba(0,0,0,.12));mix-blend-mode:multiply}.scene.theme-secret::after{content:"SECURITY SYSTEM UNSTABLE  •  VAULT ACCESS DEGRADED";position:absolute;right:3%;top:3%;z-index:2;color:rgba(255,70,90,.86);font-weight:900;letter-spacing:2px;font-size:13px;text-shadow:0 0 10px rgba(255,0,0,.75);pointer-events:none}.scene.theme-secret .scene-fx{display:block}.scene-fx{display:none;position:absolute;inset:0;z-index:2;pointer-events:none}.scene-fx:before{content:"AUTH FAILED";position:absolute;left:4%;bottom:6%;font-size:38px;letter-spacing:5px;font-weight:900;color:rgba(160,0,20,.18);transform:rotate(-8deg);text-shadow:0 0 9px rgba(255,0,0,.16)}.scene-fx:after{content:"ACCESS DENIED";position:absolute;right:14%;bottom:14%;font-size:24px;letter-spacing:3px;font-weight:900;color:rgba(255,60,80,.20);transform:rotate(4deg)}.hotspot{position:absolute;border:2px solid transparent;cursor:pointer;z-index:3}.hotspot:hover{border-color:var(--blue);box-shadow:0 0 0 9999px rgba(57,169,255,.02),0 0 22px rgba(57,169,255,.9);background:rgba(57,169,255,.07);filter:brightness(1.2)}.hotspot:hover .tip{opacity:1;transform:translate(-50%,-8px)}
+    .tip{position:absolute;left:50%;bottom:100%;transform:translate(-50%,0);opacity:0;transition:.18s;background:#050a0f;border:1px solid var(--blue);color:var(--blue);padding:6px 10px;white-space:nowrap;font-size:12px;letter-spacing:1.5px}.hint{text-align:center;color:var(--dim);font-size:13px;margin-top:12px;letter-spacing:2px;text-transform:uppercase}.progress{display:flex;gap:8px;justify-content:center;margin-top:14px}.pip{height:5px;width:56px;background:#25313c}.pip.active{background:var(--blue)}.pip.done{background:var(--green)}
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:50;display:none;align-items:center;justify-content:center;padding:20px}.modal.open{display:flex}.box{max-width:860px;width:100%;max-height:92vh;overflow:auto;background:linear-gradient(180deg,rgba(16,26,36,.72),rgba(11,17,25,.66));border:1px solid rgba(57,169,255,.5);box-shadow:0 0 50px rgba(57,169,255,.18);padding:24px}.box-head{display:flex;justify-content:space-between;gap:16px;align-items:start;border-bottom:1px solid rgba(255,255,255,.12);padding-bottom:14px;margin-bottom:18px}.box h2{margin:4px 0 0;font-size:24px}.tag{font-size:11px;color:var(--green);letter-spacing:3px;text-transform:uppercase}.x{background:transparent;color:var(--muted);border:1px solid #3b4d5d;width:32px;height:32px;cursor:pointer}.x:hover{color:var(--red);border-color:var(--red)}
+    .section{margin:18px 0}.section h3{font-size:13px;margin:0 0 8px;color:var(--blue);letter-spacing:2px;text-transform:uppercase}.section p{line-height:1.65;color:var(--muted);margin:0}.badge{display:inline-block;border:1px solid rgba(57,169,255,.35);color:#9fd5ff;padding:3px 8px;margin-bottom:8px;background:rgba(57,169,255,.08)}.problems{border-left:4px solid var(--red);background:rgba(255,77,109,.045);padding:14px 16px;color:#ffb2c0}.problems div{margin:5px 0}.ok{color:var(--green)}.bad{color:var(--red)}.warn{color:var(--yellow)}
+    .challenge{margin-top:20px;padding-top:18px;border-top:1px solid rgba(255,255,255,.12)}.code{background:rgba(5,11,16,.70);border:1px solid rgba(57,169,255,.18);padding:14px;overflow:auto;color:#cceaff;line-height:1.5;font-family:Consolas,monospace;font-size:13px;white-space:pre-wrap}.answer-box{display:flex;gap:10px;margin-top:12px}.answer-input{flex:1;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.035);color:var(--text);padding:12px;font-family:Consolas,monospace;font-size:14px}.answer-input:focus{outline:none;border-color:var(--blue);background:rgba(57,169,255,.08)}.answer-input.correct{border-color:var(--green);color:var(--green)}.answer-input.wrong{border-color:var(--red);color:var(--red)}.answer-submit{border:1px solid rgba(57,169,255,.4);background:rgba(57,169,255,.12);color:var(--text);padding:12px 18px;cursor:pointer;white-space:nowrap}.answer-submit:hover{background:rgba(57,169,255,.22)}.answer-submit:disabled{opacity:.5;cursor:default}.feedback{display:none;margin-top:12px;padding:12px;border:1px solid rgba(255,255,255,.14);line-height:1.5}.feedback.show{display:block}.reward{display:none;margin-top:18px;padding:16px;border:1px solid rgba(77,255,181,.35);background:rgba(77,255,181,.07)}.reward.show{display:block}.reward b{color:var(--green)}
+    .win{place-items:center;text-align:center;padding:40px 20px}.win.active{display:grid!important}.win-card{max-width:760px;border:1px solid rgba(77,255,181,.45);background:rgba(12,20,28,.60);padding:30px}.win h1{color:var(--green);font-size:42px}.summary{width:100%;border-collapse:collapse;margin-top:18px;text-align:left}.summary th,.summary td{border-bottom:1px solid rgba(255,255,255,.1);padding:10px;color:var(--muted)}.summary th{color:var(--blue)}
+    @media(max-width:720px){.hud{grid-template-columns:1fr}.inventory{justify-content:flex-start}.options{grid-template-columns:1fr}.topline{display:block}.pip{width:36px}}
+  </style>
+</head>
+<body>
+  <section id="intro" class="screen active intro">
+    <div class="intro-bg"></div>
+    <div class="intro-card">
+      <div class="eyebrow">K8S Escape Complex // Unit 01</div>
+      <div class="title">Kubernetes<br>Escape Room</div>
+      <div class="subtitle">The Locked Facility</div>
+      <div class="intercom">"The exit door is locked. Five critical systems have failed throughout the facility. To escape, restore each system and recover the hidden objects that unlock the next area. Every object represents a facility component — and a Kubernetes component."</div>
+      <div class="meta"><span class="pill">⏱ 20-minute limit</span><span class="pill">👤 Solo Player</span><span class="pill">🎯 5 Scenarios</span><span class="pill">📁 Offline HTML</span></div>
+      <button class="btn" onclick="startGame()">Enter Facility</button>
+    </div>
+  </section>
+
+  <section id="game" class="screen">
+    <div class="hud">
+      <div><small>Scenario</small><b id="scenario-count">1 / 5</b></div>
+      <div style="text-align:center"><div class="timer" id="timer">20:00</div><button id="audio-toggle" class="btn secondary" style="font-size:11px;padding:6px 10px;margin-top:4px" onclick="toggleAudio()">Audio On</button></div>
+      <div><small style="text-align:right">Inventory</small><div class="inventory" id="inventory"></div></div>
+    </div>
+    <main class="game-wrap">
+      <div class="topline"><div><div class="scene-name" id="scene-name"></div><div class="objective" id="objective"></div></div><button id="hint-btn" class="btn secondary" onclick="showHint()">Hint</button></div>
+      <div class="scene" id="scene"><img id="scene-img" alt="Scenario image"><div class="scene-fx"></div><div class="hotspot" id="hotspot"><span class="tip">Investigate</span></div></div>
+      <div class="hint" id="hint">Move cursor over the correct object, then click to investigate.</div>
+      <div class="progress" id="progress"></div>
+    </main>
+  </section>
+
+  <div class="modal" id="modal">
+    <div class="box">
+      <div class="box-head"><div><div class="tag" id="modal-tag">Object Found</div><h2 id="modal-title"></h2></div><button class="x" onclick="closeModal()">×</button></div>
+      <div class="section"><h3>Escape Room Story</h3><p id="story"></p></div>
+      <div class="section"><h3>Kubernetes Context</h3><span class="badge" id="resource"></span><p id="context"></p></div>
+      <div class="section"><h3>Problem Statement</h3><div class="problems" id="problems"></div></div>
+      <div class="challenge"><h3>⚡ Troubleshoot the Cluster</h3><p id="instruction" style="color:var(--muted);line-height:1.6"></p><div class="code" id="code"></div><div class="answer-box" id="answer-area"></div><div class="feedback" id="feedback"></div><div class="reward" id="reward"></div></div>
+    </div>
+  </div>
+
+  <section id="win" class="screen win">
+    <div class="win-card"><div class="eyebrow">All Systems Restored</div><h1>You Escaped the Kubernetes Facility</h1><p style="color:var(--muted);line-height:1.6">The final exit door is unlocked. The cluster has been restored through Service, ConfigMap, PVC, Secret, and NetworkPolicy troubleshooting.</p><table class="summary"><tr><th>Object</th><th>K8s Resource</th><th>Concept</th></tr><tr><td>Reception Access Card</td><td>Service</td><td>Traffic routing with selectors</td></tr><tr><td>Facility Blueprint</td><td>ConfigMap</td><td>Application configuration</td></tr><tr><td>Storage Expansion Plan</td><td>PVC</td><td>Persistent storage capacity</td></tr><tr><td>Level 5 Security Badge</td><td>Secret</td><td>Sensitive credentials</td></tr><tr><td>Security Gate Door</td><td>NetworkPolicy</td><td>Pod communication control</td></tr></table><br><button class="btn" onclick="location.reload()">Play Again</button></div>
+  </section>
+
+<script>
+const scenarios=[
+ {title:'Scenario 1 — Reception Desk (Service)', img:'images/scenario1.jpg', objective:'Find the Reception Terminal.', obj:'Reception Terminal', hint:'Look near the front desk workstation. The object is on the reception counter, close to the monitor.', tag:'OBJECT FOUND: SERVICE', resource:'v1/Service', hotspot:{x:22.5,y:46,w:15.5,h:14}, story:'The facility visitor routing system has failed. Employees are present and working, but the reception terminal is sending visitors to the wrong locations. Because the terminal cannot route anyone to the correct department, the Reception Access Card cannot be released.', context:'A Kubernetes Service is a stable entry point to one or more pods. Users connect to the Service, and the Service forwards traffic to the correct backend pods using label selectors. If the selector is wrong, the pods can be healthy but traffic still goes nowhere.', problems:[['Application pods are running','ok'],['Service exists in the cluster','ok'],['Users cannot access the application','bad'],['Service selector does not match pod labels','warn']], instruction:'Identify the root cause of the routing failure.', code:'Service selector:\n  app: frontend-v1\n\nPod labels:\n  app: frontend', answerPlaceholder:'Type the fix in key: value format', check:v=>/^app\s*:\s*frontend$/i.test(v.trim()), feedback:'Correct. Kubernetes Services route traffic by matching selector labels to pod labels exactly. Update the selector to app: frontend.', reward:'The reception terminal verifies the route and releases the Reception Access Card. Next: Engineering Wing — Blueprint Cabinet.', icon:'🗂'},
+ {title:'Scenario 2 — Blueprint Cabinet (ConfigMap)', img:'images/scenario2.jpg', objective:'Find the Facility Blueprint.', obj:'Facility Blueprint', hint:'Search around the engineering cabinet and the configuration labels.', tag:'OBJECT FOUND: CONFIGMAP', resource:'v1/ConfigMap', hotspot:{x:40.8,y:28,w:6,h:16.5}, story:'The Reception Access Card unlocks the Engineering Wing. Inside is a machine responsible for controlling storage doors. The machine has power, but it refuses to work because its instructions are incomplete.', context:'A ConfigMap stores non-sensitive application configuration such as URLs, ports, feature flags, and runtime settings. A pod can be running, but the application can still fail if required configuration is missing or incorrect.', problems:[['Application is reachable','ok'],['Application displays configuration errors','bad'],['Required DB_HOST value is missing','warn'],['Application cannot load required runtime config','bad']], instruction:'The application logs show: DB_HOST not defined. What should be fixed?', code:'ConfigMap app-config:\n  APP_PORT: "8080"\n  DB_HOST: ""\n\nPod references:\n  configMapKeyRef:\n    name: app-config\n    key: DB_HOST', answerPlaceholder:'Type the fix in KEY: value format', check:v=>/^db_host\s*:\s*\S+/i.test(v.trim()), feedback:'Correct. The key exists, but the value is empty. Set DB_HOST to the required backend/database endpoint.', reward:'The Blueprint Cabinet unlocks. Reward: Facility Blueprint. Next: Archive Warehouse — Storage Expansion Area.', icon:'📐'},
+ {title:'Scenario 3 — Confidential Storage File (PVC)', img:'images/scenario3.jpg', objective:'Find the Confidential Storage File.', obj:'Confidential Storage File', hint:'The storage expansion clue is on the table, not on the shelves.', tag:'OBJECT FOUND: PVC', resource:'v1/PersistentVolumeClaim', hotspot:{x:20,y:79,w:12,h:13}, story:'The Facility Blueprint leads to the archive warehouse. The warehouse contains important records, but the archive storage is already full. On the table, a confidential storage file contains the expansion request needed to add more capacity and continue the escape.', context:'A PersistentVolumeClaim provides persistent storage to pods. When application data consumes the available space, administrators may need to expand the PVC if the StorageClass supports expansion. The confidential storage file represents the request to increase persistent storage capacity.', problems:[['Application is running','ok'],['Configuration is correct','ok'],['Application reports storage errors','bad'],['No space left on device','warn']], instruction:'The PVC app-data is Bound and almost full. StorageClass allows expansion. Choose the safest fix.', code:'PVC: app-data\nCapacity: 10Gi\nStorageClass: standard\nallowVolumeExpansion: true\n\nPod logs:\nERROR: No space left on device', answerPlaceholder:'Type the fix in key: value format', check:v=>{const m=v.trim().match(/^storage\s*:\s*(\d+)\s*gi$/i);return !!m&&parseInt(m[1],10)>10;}, feedback:'Correct. Patch spec.resources.requests.storage to a larger value. Do not delete the PVC because that risks data loss.', reward:'The archive storage system expands. Reward: Storage Expansion Records. Next: Security Vault Sector.', icon:'📦'},
+ {title:'Scenario 4 — Security Vault (Secret)', img:'images/scenario4.jpg', theme:'theme-secret', objective:'Find the Level 5 Security Badge.', obj:'Level 5 Security Badge', hint:'Look near the Control Room door. The Level 5 Security Badge is hanging on the wall beside the entrance.', tag:'OBJECT FOUND: SECRET', resource:'v1/Secret', hotspot:{x:51,y:42,w:5.5,h:15}, story:'The newly accessible archives reveal the Security Office. Inside is a vault containing credentials required to activate critical facility systems. The vault exists, but the credentials inside are invalid or missing.', context:'A Kubernetes Secret stores sensitive data such as usernames, passwords, API keys, tokens, and certificates. Applications consume Secrets through environment variables or mounted files.', problems:[['Application can access storage','ok'],['Configuration is correct','ok'],['Backend authentication fails','bad'],['Secret name mismatch detected','warn']], instruction:'The Pod references db-credentials, but kubectl get secrets shows db-creds. What is wrong?', code:'Pod env:\n  secretKeyRef:\n    name: db-credentials\n    key: password\n\nkubectl get secrets:\n  db-creds   Opaque   2', answerPlaceholder:'Type the Secret name shown by kubectl', check:v=>/^db-creds$/i.test(v.trim()), feedback:'Correct. The Pod references db-credentials, but the actual Secret is db-creds. Fix the name mismatch.', reward:'The vault opens. Reward: Level 5 Security Badge. Next: Security Gate Door.', icon:'🔐'},
+ {title:'Scenario 5 — Security Gate Door (NetworkPolicy)', img:'images/scenario5.jpg', objective:'Activate the Final Exit Door.', obj:'Security Gate Door', hint:'The final object is the access control point that decides who can pass.', tag:'OBJECT FOUND: NETWORKPOLICY', resource:'networking.k8s.io/v1/NetworkPolicy', hotspot:{x:5,y:42,w:3,h:3}, story:'The final control room is operational, and the exit door controller is also operational. However, the systems cannot communicate because security barriers are blocking traffic between them.', context:'A NetworkPolicy controls pod-to-pod communication. It acts like a security checkpoint: only explicitly allowed traffic can pass when a policy selects a pod.', problems:[['All previous issues are fixed','ok'],['Applications are healthy','ok'],['Frontend cannot reach backend','bad'],['Ingress policy allows the wrong source label','warn']], instruction:'The backend policy allows api-gateway, but the frontend pod label is frontend. What should be corrected?', code:'NetworkPolicy backend-ingress:\n  podSelector: app=backend\n  ingress from podSelector: app=api-gateway\n\nFrontend pod label:\n  app=frontend', answerPlaceholder:'Type the fix in key: value or key=value format', check:v=>/^app\s*[:=]\s*frontend$/i.test(v.trim()), feedback:'Correct. The policy allows the wrong source selector. Allow app=frontend to restore frontend-to-backend communication.', reward:'The Security Gate Door unlocks. ALL FACILITY SYSTEMS RESTORED. You escaped.', icon:'🚪'}
+];
+let current=0, timeLeft=1200, timerId=null, attempts=0, completed=[], hintUsed=[false,false,false,false,false];
+let audioCtx=null, masterGain=null, ambientNodes=[], audioEnabled=true;
+const $=id=>document.getElementById(id);
+function startGame(){ $('intro').classList.remove('active'); $('intro').style.display='none'; $('game').style.display='block'; $('game').classList.add('active'); completed=[]; hintUsed=[false,false,false,false,false]; current=0; timeLeft=1200; attempts=0; buildInventory(); buildProgress(); initAudio(); loadScenario(); timerId=setInterval(tick,1000); }
+function tick(){ timeLeft--; const m=String(Math.floor(timeLeft/60)).padStart(2,'0'), s=String(timeLeft%60).padStart(2,'0'); $('timer').textContent=m+':'+s; if(timeLeft<=0){clearInterval(timerId); alert('Time expired. Restart the game to try again.'); location.reload();}}
+function buildInventory(){ $('inventory').innerHTML=''; for(let i=0;i<5;i++){const d=document.createElement('div');d.className='slot';d.id='slot'+i;$('inventory').appendChild(d);} }
+function buildProgress(){ $('progress').innerHTML=''; for(let i=0;i<5;i++){const d=document.createElement('div');d.className='pip';d.id='pip'+i;$('progress').appendChild(d);} }
+function loadScenario(){ const s=scenarios[current]; $('scene').className='scene '+(s.theme||''); $('scenario-count').textContent=(current+1)+' / 5'; $('scene-name').textContent=s.title; $('objective').textContent=s.objective; $('scene-img').src=s.img; $('scene-img').alt=s.title; const h=$('hotspot'); h.style.left=s.hotspot.x+'%';h.style.top=s.hotspot.y+'%';h.style.width=s.hotspot.w+'%';h.style.height=s.hotspot.h+'%';h.onclick=openModal; h.onmouseenter=()=>playFx('hover'); $('hint').textContent='Move cursor over the correct object, then click to investigate.'; const hb=$('hint-btn'); if(hb){ hb.disabled=!!hintUsed[current]; hb.classList.toggle('used', !!hintUsed[current]); hb.textContent=hintUsed[current]?'Hint Used':'Hint'; } updateProgress(); }
+function updateProgress(){ for(let i=0;i<5;i++){ $('pip'+i).className='pip'+(i<current?' done':i===current?' active':''); $('slot'+i).className='slot'+(completed[i]?' filled':''); $('slot'+i).textContent=completed[i]?scenarios[i].icon:''; }}
+function showHint(){ const s=scenarios[current]; if(hintUsed[current]) return; hintUsed[current]=true; $('hint').textContent='Hint: '+(s.hint||('Find the '+s.obj+'.')); const hb=$('hint-btn'); if(hb){ hb.disabled=true; hb.classList.add('used'); hb.textContent='Hint Used'; } playFx('hint'); }
+function openModal(){ const s=scenarios[current]; playFx('found'); $('modal').classList.add('open'); $('modal-tag').textContent=s.tag; $('modal-title').textContent=s.obj; $('story').textContent=s.story; $('resource').textContent=s.resource; $('context').textContent=s.context; $('instruction').textContent=s.instruction; $('code').textContent=s.code; $('feedback').className='feedback'; $('feedback').textContent=''; $('reward').className='reward'; $('reward').innerHTML=''; $('problems').innerHTML=s.problems.map(p=>`<div class="${p[1]}">${p[1]==='ok'?'✓':p[1]==='warn'?'!':'✗'} ${p[0]}</div>`).join(''); const area=$('answer-area'); area.innerHTML=''; const input=document.createElement('input'); input.type='text'; input.className='answer-input'; input.id='answerInput'; input.placeholder=s.answerPlaceholder||'Type your answer'; input.autocomplete='off'; const btn=document.createElement('button'); btn.className='answer-submit'; btn.id='answerSubmit'; btn.textContent='Submit'; btn.onclick=checkAnswer; input.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); checkAnswer(); } }); area.appendChild(input); area.appendChild(btn); setTimeout(()=>input.focus(),50); }
+function closeModal(){ $('modal').classList.remove('open'); }
+function checkAnswer(){ const s=scenarios[current]; const input=$('answerInput'); const val=input.value||''; if(!val.trim())return; attempts++; const correct=s.check(val); const fb=$('feedback'); fb.className='feedback show'; if(correct){ playFx('success'); input.classList.remove('wrong'); input.classList.add('correct'); input.disabled=true; $('answerSubmit').disabled=true; fb.style.borderColor='rgba(77,255,181,.35)'; fb.style.color='var(--green)'; fb.textContent=s.feedback; completed[current]=true; updateProgress(); const r=$('reward'); r.className='reward show'; r.innerHTML=`<b>Reward Unlocked:</b><br>${s.reward}<br><br><button class="btn" onclick="nextScenario()">${current===4?'Open Final Exit Door':'Proceed to Next Room →'}</button>`; } else { playFx('error'); input.classList.add('wrong'); fb.style.borderColor='rgba(255,77,109,.35)'; fb.style.color='var(--red)'; fb.textContent='Incorrect. Review the YAML and try again.'; input.select(); }}
+function nextScenario(){ closeModal(); if(current===4){ clearInterval(timerId); $('game').classList.remove('active'); $('game').style.display='none'; $('win').style.display='grid'; $('win').classList.add('active'); return; } current++; loadScenario(); }
+
+function initAudio(){
+  if(audioCtx || !audioEnabled) return;
+  try{
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = 0.16;
+    masterGain.connect(audioCtx.destination);
+
+    const humGain = audioCtx.createGain();
+    humGain.gain.value = 0.05;
+    humGain.connect(masterGain);
+
+    const hum = audioCtx.createOscillator();
+    hum.type = 'sine';
+    hum.frequency.value = 48;
+    hum.connect(humGain);
+    hum.start();
+
+    const pulseGain = audioCtx.createGain();
+    pulseGain.gain.value = 0.018;
+    pulseGain.connect(masterGain);
+    const pulse = audioCtx.createOscillator();
+    pulse.type = 'triangle';
+    pulse.frequency.value = 96;
+    pulse.connect(pulseGain);
+    pulse.start();
+
+    ambientNodes=[hum, pulse, humGain, pulseGain];
+  }catch(e){ audioEnabled=false; const b=$('audio-toggle'); if(b){b.textContent='Audio N/A'; b.disabled=true;} }
+}
+function playFx(type){
+  if(!audioEnabled) return;
+  if(!audioCtx) initAudio();
+  if(!audioCtx || audioCtx.state==='closed') return;
+  try{
+    if(audioCtx.state==='suspended') audioCtx.resume();
+    const o=audioCtx.createOscillator();
+    const g=audioCtx.createGain();
+    o.connect(g); g.connect(masterGain || audioCtx.destination);
+    const now=audioCtx.currentTime;
+    let freq=440, dur=.08, gain=.05, wave='sine';
+    if(type==='hover'){freq=520; dur=.035; gain=.025; wave='triangle';}
+    if(type==='hint'){freq=330; dur=.12; gain=.045; wave='sine';}
+    if(type==='found'){freq=660; dur=.16; gain=.06; wave='triangle';}
+    if(type==='success'){freq=780; dur=.22; gain=.07; wave='sine';}
+    if(type==='error'){freq=140; dur=.20; gain=.075; wave='sawtooth';}
+    o.type=wave; o.frequency.setValueAtTime(freq, now);
+    if(type==='success') o.frequency.exponentialRampToValueAtTime(1040, now+dur);
+    if(type==='error') o.frequency.exponentialRampToValueAtTime(90, now+dur);
+    g.gain.setValueAtTime(0.0001, now);
+    g.gain.exponentialRampToValueAtTime(gain, now+.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, now+dur);
+    o.start(now); o.stop(now+dur+.03);
+  }catch(e){}
+}
+function toggleAudio(){
+  audioEnabled=!audioEnabled;
+  const b=$('audio-toggle');
+  if(!audioEnabled){
+    try{ if(masterGain) masterGain.gain.value=0; }catch(e){}
+    if(b) b.textContent='Audio Off';
+  }else{
+    initAudio();
+    try{ if(masterGain) masterGain.gain.value=0.16; if(audioCtx && audioCtx.state==='suspended') audioCtx.resume(); }catch(e){}
+    if(b) b.textContent='Audio On';
+    playFx('hint');
+  }
+}
+
+</script>
+</body>
+</html>
