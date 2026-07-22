@@ -11,11 +11,12 @@ Return to your **browser game** for the story. This panel lists the cluster reso
 | Pod | `reception` | `visitor` |
 | Service | `reception` | `reception-desk` |
 
-## ✅ Verification command
+The application pods are running, but the `visitor` pod cannot reach the reception service. Investigate why traffic is not being delivered and restore access.
 
-Click the command to run it in the terminal:
+## ✅ Verification command
 
 ```bash
 kubectl -n reception exec visitor -- curl -s reception-desk
 ```{{exec}}
 
+If you reach the application and see the **success message**, click **CHECK**.

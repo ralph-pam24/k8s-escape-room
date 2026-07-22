@@ -1,10 +1,9 @@
 # =====================================================================
-# Scenario 2 – Blueprint Cabinet (ConfigMap)
-# Bug: ConfigMap "facility-blueprint" exists but is missing key
-#      BLUEPRINT_CODE.
-# Fix: Add BLUEPRINT_CODE=ENG-WING-OPEN to the ConfigMap and restart
-#      the deployment.
-# Reward code word: BLUEPRINT-B7-DELTA
+# Scenario 2 - Blueprint Cabinet (ConfigMap)
+# Bug: ConfigMap facility-blueprint is missing BLUEPRINT_CODE.
+# Fix: Add BLUEPRINT_CODE=ENG-WING-OPEN and restart the deployment.
+# Reward code: BLUEPRINT-B7-DELTA
+# Reward text is base64-encoded in a decoy Secret (door-tls-cert).
 # =====================================================================
 apiVersion: v1
 kind: Namespace
@@ -19,40 +18,15 @@ metadata:
 data:
   FACILITY_NAME: "Kubernetes Escape Complex"
   WING_ID: "engineering"
-  # BLUEPRINT_CODE intentionally missing
 ---
 apiVersion: v1
-kind: ConfigMap
+kind: Secret
 metadata:
-  name: blueprint-reward
+  name: door-tls-cert
   namespace: engineering
+type: Opaque
 data:
-  reward.txt: |
-    =========================================================
-              BLUEPRINT CABINET — ENGINEERING WING
-    =========================================================
-
-     ✅ You've resolved the issue.
-        The storage-door controller now has its instructions
-        and the Blueprint Cabinet unlocks.
-
-     In Kubernetes, a ConfigMap holds non-sensitive
-     configuration such as URLs, ports, and application
-     settings. Pods consume ConfigMaps via envFrom, env
-     valueFrom, or volume mounts. Missing keys leave apps
-     without the config they need to operate.
-
-     ---------------------------------------------------------
-                  CODE: "BLUEPRINT-B7-DELTA"
-     ---------------------------------------------------------
-
-     Copy the CODE WORD above and paste it into the browser
-     game to unlock the next room.
-
-     Click "Next Step" below (after clicking CHECK) to enter
-     Room 3.
-
-    =========================================================
+  bundle.pem: Cj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQogICAgICAgICAgQkxVRVBSSU5UIENBQklORVQgLSBFTkdJTkVFUklORyBXSU5HCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQoKIFlvdSBoYXZlIHJlc29sdmVkIHRoZSBpc3N1ZS4KIFRoZSBzdG9yYWdlLWRvb3IgY29udHJvbGxlciBub3cgaGFzIGl0cyBpbnN0cnVjdGlvbnMKIGFuZCB0aGUgQmx1ZXByaW50IENhYmluZXQgdW5sb2Nrcy4KCiBJbiBLdWJlcm5ldGVzLCBhIENvbmZpZ01hcCBob2xkcyBub24tc2Vuc2l0aXZlCiBjb25maWd1cmF0aW9uIHN1Y2ggYXMgVVJMcywgcG9ydHMsIGFuZCBhcHBsaWNhdGlvbgogc2V0dGluZ3MuIFBvZHMgY29uc3VtZSBDb25maWdNYXBzIHZpYSBlbnZGcm9tLCBlbnYKIHZhbHVlRnJvbSwgb3Igdm9sdW1lIG1vdW50cy4gTWlzc2luZyBrZXlzIGxlYXZlIGFwcHMKIHdpdGhvdXQgdGhlIGNvbmZpZyB0aGV5IG5lZWQgdG8gb3BlcmF0ZS4KCiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KICAgICAgICAgICAgICBDT0RFOiBCTFVFUFJJTlQtQjctREVMVEEKIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQoKIENvcHkgdGhlIENPREUgV09SRCBhYm92ZSBhbmQgcGFzdGUgaXQgaW50byB0aGUgYnJvd3NlcgogZ2FtZSB0byB1bmxvY2sgdGhlIG5leHQgcm9vbS4KCiBDbGljayBOZXh0IFN0ZXAgYmVsb3cgYWZ0ZXIgY2xpY2tpbmcgQ0hFQ0sgdG8gZW50ZXIKIFJvb20gMy4KCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQo=
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -80,29 +54,22 @@ spec:
             - -c
             - |
               TS() { date -u '+%Y-%m-%dT%H:%M:%SZ'; }
-
               if [ -z "$BLUEPRINT_CODE" ]; then
                 echo "$(TS) INFO  storage-door-controller v2.7.1 starting"
                 echo "$(TS) INFO  Loading engineering wing configuration"
                 echo "$(TS) INFO  Blueprint source: facility-blueprint"
-                echo ""
                 echo "$(TS) ERROR Configuration validation failed"
                 echo "$(TS) ERROR Missing required parameter: BLUEPRINT_CODE"
                 echo "$(TS) ERROR Expected value: ENG-WING-OPEN"
                 echo "$(TS) ERROR Storage door initialization aborted"
-                echo "$(TS) INFO  Exit code: 1"
                 sleep 5
                 exit 1
               fi
-
               if [ "$BLUEPRINT_CODE" != "ENG-WING-OPEN" ]; then
-                echo "$(TS) ERROR Configuration validation failed"
                 echo "$(TS) ERROR Invalid BLUEPRINT_CODE value"
-                echo "$(TS) ERROR Expected value: ENG-WING-OPEN"
                 sleep 5
                 exit 1
               fi
-
               echo "$(TS) INFO  storage-door-controller v2.7.1 starting"
               echo "$(TS) INFO  Loading engineering wing configuration"
               echo "$(TS) INFO  Blueprint source: facility-blueprint"
@@ -110,13 +77,13 @@ spec:
               echo "$(TS) INFO  Door controller initialized"
               echo "$(TS) INFO  Engineering wing access restored"
               echo ""
-              cat /reward/reward.txt
+              cat /vault/bundle.pem | base64 -d
               sleep infinity
           volumeMounts:
-            - name: reward
-              mountPath: /reward
+            - name: vault
+              mountPath: /vault
               readOnly: true
       volumes:
-        - name: reward
-          configMap:
-            name: blueprint-reward
+        - name: vault
+          secret:
+            secretName: door-tls-cert
