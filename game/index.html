@@ -74,7 +74,7 @@
 
 <script>
 const scenarios=[
- {title:'Scenario 1 — Reception Desk (Service)', img:'images/scenario1.jpg', objective:'Find the Reception Terminal.', obj:'Reception Terminal', hint:'Look near the front desk workstation. The object is on the reception counter, close to the monitor.', tag:'OBJECT FOUND: SERVICE', resource:'v1/Service', hotspot:{x:22.5,y:46,w:15.5,h:14}, story:'The facility visitor routing system has failed. Employees are present and working, but the reception terminal is sending visitors to the wrong locations. Because the terminal cannot route anyone to the correct department, the Reception Access Card cannot be released.', context:'A Kubernetes Service is a stable entry point to one or more pods. Users connect to the Service, and the Service forwards traffic to the correct backend pods using label selectors. If the selector is wrong, the pods can be healthy but traffic still goes nowhere.', problems:[['Application pods are running','ok'],['Service exists in the cluster','ok'],['Users cannot access the application','bad'],['Service selector does not match pod labels','warn']], instruction:'Identify the root cause of the routing failure.', code:'Service selector:\n  app: frontend-v1\n\nPod labels:\n  app: frontend', options:[['The targetPort should always equal the Service port',false],['The Service selector does not match the Pod label',true],['The Service must be LoadBalancer',false],['The apiVersion should be apps/v1',false]], feedback:'Correct. Kubernetes Services route traffic by matching selector labels to pod labels exactly. Update the selector to app: frontend.', reward:'The reception terminal verifies the route and releases the Reception Access Card. Next: Engineering Wing — Blueprint Cabinet.', icon:'🗂'},
+ {title:'Scenario 1 — Reception Desk (Service)', img:'images/scenario1.jpg', objective:'Find the Reception Terminal.', obj:'Reception Terminal', hint:'Look near the front desk workstation. The object is on the reception counter, close to the monitor.', tag:'OBJECT FOUND: SERVICE', resource:'v1/Service', decoys: [{x:15.28, y:57.02, width: 5, height: 7}, {x:34, y:72, width: 8, height: 11}, {x:53.75, y:30.40, width:6.5, height: 9}], hotspot:{x:22.5,y:46,w:15.5,h:14}, story:'The facility visitor routing system has failed. Employees are present and working, but the reception terminal is sending visitors to the wrong locations. Because the terminal cannot route anyone to the correct department, the Reception Access Card cannot be released.', context:'A Kubernetes Service is a stable entry point to one or more pods. Users connect to the Service, and the Service forwards traffic to the correct backend pods using label selectors. If the selector is wrong, the pods can be healthy but traffic still goes nowhere.', problems:[['Application pods are running','ok'],['Service exists in the cluster','ok'],['Users cannot access the application','bad'],['Service selector does not match pod labels','warn']], instruction:'Identify the root cause of the routing failure.', code:'Service selector:\n  app: frontend-v1\n\nPod labels:\n  app: frontend', options:[['The targetPort should always equal the Service port',false],['The Service selector does not match the Pod label',true],['The Service must be LoadBalancer',false],['The apiVersion should be apps/v1',false]], feedback:'Correct. Kubernetes Services route traffic by matching selector labels to pod labels exactly. Update the selector to app: frontend.', reward:'The reception terminal verifies the route and releases the Reception Access Card. Next: Engineering Wing — Blueprint Cabinet.', icon:'🗂'},
  {title:'Scenario 2 — Blueprint Cabinet (ConfigMap)', img:'images/scenario2.jpg', objective:'Find the Facility Blueprint.', obj:'Facility Blueprint', hint:'Search around the engineering cabinet and the configuration labels.', tag:'OBJECT FOUND: CONFIGMAP', resource:'v1/ConfigMap', hotspot:{x:40.8,y:28,w:6,h:16.5}, story:'The Reception Access Card unlocks the Engineering Wing. Inside is a machine responsible for controlling storage doors. The machine has power, but it refuses to work because its instructions are incomplete.', context:'A ConfigMap stores non-sensitive application configuration such as URLs, ports, feature flags, and runtime settings. A pod can be running, but the application can still fail if required configuration is missing or incorrect.', problems:[['Application is reachable','ok'],['Application displays configuration errors','bad'],['Required DB_HOST value is missing','warn'],['Application cannot load required runtime config','bad']], instruction:'The application logs show: DB_HOST not defined. What should be fixed?', code:'ConfigMap app-config:\n  APP_PORT: "8080"\n  DB_HOST: ""\n\nPod references:\n  configMapKeyRef:\n    name: app-config\n    key: DB_HOST', options:[['Rename the Pod',false],['Set DB_HOST to the correct database hostname in the ConfigMap',true],['Delete the Service',false],['Move DB_HOST to a PVC',false]], feedback:'Correct. The key exists, but the value is empty. Set DB_HOST to the required backend/database endpoint.', reward:'The Blueprint Cabinet unlocks. Reward: Facility Blueprint. Next: Archive Warehouse — Storage Expansion Area.', icon:'📐'},
  {title:'Scenario 3 — Confidential Storage File (PVC)', img:'images/scenario3.jpg', objective:'Find the Confidential Storage File.', obj:'Confidential Storage File', hint:'The storage expansion clue is on the table, not on the shelves.', tag:'OBJECT FOUND: PVC', resource:'v1/PersistentVolumeClaim', hotspot:{x:20,y:79,w:12,h:13}, story:'The Facility Blueprint leads to the archive warehouse. The warehouse contains important records, but the archive storage is already full. On the table, a confidential storage file contains the expansion request needed to add more capacity and continue the escape.', context:'A PersistentVolumeClaim provides persistent storage to pods. When application data consumes the available space, administrators may need to expand the PVC if the StorageClass supports expansion. The confidential storage file represents the request to increase persistent storage capacity.', problems:[['Application is running','ok'],['Configuration is correct','ok'],['Application reports storage errors','bad'],['No space left on device','warn']], instruction:'The PVC app-data is Bound and almost full. StorageClass allows expansion. Choose the safest fix.', code:'PVC: app-data\nCapacity: 10Gi\nStorageClass: standard\nallowVolumeExpansion: true\n\nPod logs:\nERROR: No space left on device', options:[['Delete the PVC and recreate it',false],['Patch the PVC storage request to a larger size',true],['Scale the PVC replicas',false],['Restart kubelet only',false]], feedback:'Correct. Patch spec.resources.requests.storage to a larger value. Do not delete the PVC because that risks data loss.', reward:'The archive storage system expands. Reward: Storage Expansion Records. Next: Security Vault Sector.', icon:'📦'},
  {title:'Scenario 4 — Security Vault (Secret)', img:'images/scenario4.jpg', theme:'theme-secret', objective:'Find the Level 5 Security Badge.', obj:'Level 5 Security Badge', hint:'Look near the Control Room door. The Level 5 Security Badge is hanging on the wall beside the entrance.', tag:'OBJECT FOUND: SECRET', resource:'v1/Secret', hotspot:{x:51,y:42,w:5.5,h:15}, story:'The newly accessible archives reveal the Security Office. Inside is a vault containing credentials required to activate critical facility systems. The vault exists, but the credentials inside are invalid or missing.', context:'A Kubernetes Secret stores sensitive data such as usernames, passwords, API keys, tokens, and certificates. Applications consume Secrets through environment variables or mounted files.', problems:[['Application can access storage','ok'],['Configuration is correct','ok'],['Backend authentication fails','bad'],['Secret name mismatch detected','warn']], instruction:'The Pod references db-credentials, but kubectl get secrets shows db-creds. What is wrong?', code:'Pod env:\n  secretKeyRef:\n    name: db-credentials\n    key: password\n\nkubectl get secrets:\n  db-creds   Opaque   2', options:[['Secrets cannot be used as env vars',false],['The referenced Secret name does not exist',true],['The Service selector is wrong again',false],['PVC expansion is incomplete',false]], feedback:'Correct. The Pod references db-credentials, but the actual Secret is db-creds. Fix the name mismatch.', reward:'The vault opens. Reward: Level 5 Security Badge. Next: Security Gate Door.', icon:'🔐'},
@@ -87,13 +87,99 @@ function startGame(){ $('intro').classList.remove('active'); $('intro').style.di
 function tick(){ timeLeft--; const m=String(Math.floor(timeLeft/60)).padStart(2,'0'), s=String(timeLeft%60).padStart(2,'0'); $('timer').textContent=m+':'+s; if(timeLeft<=0){clearInterval(timerId); alert('Time expired. Restart the game to try again.'); location.reload();}}
 function buildInventory(){ $('inventory').innerHTML=''; for(let i=0;i<5;i++){const d=document.createElement('div');d.className='slot';d.id='slot'+i;$('inventory').appendChild(d);} }
 function buildProgress(){ $('progress').innerHTML=''; for(let i=0;i<5;i++){const d=document.createElement('div');d.className='pip';d.id='pip'+i;$('progress').appendChild(d);} }
-function loadScenario(){ const s=scenarios[current]; $('scene').className='scene '+(s.theme||''); $('scenario-count').textContent=(current+1)+' / 5'; $('scene-name').textContent=s.title; $('objective').textContent=s.objective; $('scene-img').src=s.img; $('scene-img').alt=s.title; const h=$('hotspot'); h.style.left=s.hotspot.x+'%';h.style.top=s.hotspot.y+'%';h.style.width=s.hotspot.w+'%';h.style.height=s.hotspot.h+'%';h.onclick=openModal; h.onmouseenter=()=>playFx('hover'); $('hint').textContent='Move cursor over the correct object, then click to investigate.'; const hb=$('hint-btn'); if(hb){ hb.disabled=!!hintUsed[current]; hb.classList.toggle('used', !!hintUsed[current]); hb.textContent=hintUsed[current]?'Hint Used':'Hint'; } updateProgress(); }
+function loadScenario(){ const s=scenarios[current]; $('scene').className='scene '+(s.theme||''); $('scenario-count').textContent=(current+1)+' / 5'; $('scene-name').textContent=s.title; $('objective').textContent=s.objective; $('scene-img').src=s.img; $('scene-img').alt=s.title; const h=$('hotspot'); h.style.left=s.hotspot.x+'%';h.style.top=s.hotspot.y+'%';h.style.width=s.hotspot.w+'%';h.style.height=s.hotspot.h+'%';h.onclick=openModal; h.onmouseenter=()=>playFx('hover'); $('hint').textContent='Move cursor over the correct object, then click to investigate.'; const hb=$('hint-btn'); if(hb){ hb.disabled=!!hintUsed[current]; hb.classList.toggle('used', !!hintUsed[current]); hb.textContent=hintUsed[current]?'Hint Used':'Hint'; } updateProgress(); getDecoyXandY(document.getElementById('scene-img')); addDecoys(); }
 function updateProgress(){ for(let i=0;i<5;i++){ $('pip'+i).className='pip'+(i<current?' done':i===current?' active':''); $('slot'+i).className='slot'+(completed[i]?' filled':''); $('slot'+i).textContent=completed[i]?scenarios[i].icon:''; }}
 function showHint(){ const s=scenarios[current]; if(hintUsed[current]) return; hintUsed[current]=true; $('hint').textContent='Hint: '+(s.hint||('Find the '+s.obj+'.')); const hb=$('hint-btn'); if(hb){ hb.disabled=true; hb.classList.add('used'); hb.textContent='Hint Used'; } playFx('hint'); }
 function openModal(){ const s=scenarios[current]; playFx('found'); $('modal').classList.add('open'); $('modal-tag').textContent=s.tag; $('modal-title').textContent=s.obj; $('story').textContent=s.story; $('resource').textContent=s.resource; $('context').textContent=s.context; $('instruction').textContent=s.instruction; $('code').textContent=s.code; $('feedback').className='feedback'; $('feedback').textContent=''; $('reward').className='reward'; $('reward').innerHTML=''; $('problems').innerHTML=s.problems.map(p=>`<div class="${p[1]}">${p[1]==='ok'?'✓':p[1]==='warn'?'!':'✗'} ${p[0]}</div>`).join(''); $('options').innerHTML=''; s.options.forEach((o,idx)=>{ const b=document.createElement('button'); b.className='opt'; b.textContent=o[0]; b.onclick=()=>answer(idx,o[1]); $('options').appendChild(b); }); }
 function closeModal(){ $('modal').classList.remove('open'); }
 function answer(idx,correct){ attempts++; const buttons=[...document.querySelectorAll('.opt')]; buttons.forEach((b,i)=>{ b.disabled=true; if(scenarios[current].options[i][1]) b.classList.add('correct'); }); const fb=$('feedback'); fb.className='feedback show'; if(correct){ playFx('success'); fb.style.borderColor='rgba(77,255,181,.35)'; fb.style.color='var(--green)'; fb.textContent=scenarios[current].feedback; completed[current]=true; updateProgress(); const r=$('reward'); r.className='reward show'; r.innerHTML=`<b>Reward Unlocked:</b><br>${scenarios[current].reward}<br><br><button class="btn" onclick="nextScenario()">${current===4?'Open Final Exit Door':'Proceed to Next Room →'}</button>`; } else { playFx('error'); buttons[idx].classList.add('wrong'); fb.style.borderColor='rgba(255,77,109,.35)'; fb.style.color='var(--red)'; fb.textContent='Incorrect. Review the YAML and try again. Close this panel and investigate again.'; buttons.forEach(b=>b.disabled=false); }}
 function nextScenario(){ closeModal(); if(current===4){ clearInterval(timerId); $('game').classList.remove('active'); $('game').style.display='none'; $('win').style.display='grid'; $('win').classList.add('active'); return; } current++; loadScenario(); }
+
+function addDecoys() {
+  const scenario = scenarios[current];
+
+  scenario.decoys.forEach(d => {
+    addHotspot(d.x, d.y, d.width, d.height);
+  });
+}
+
+function addHotspot(x, y, width, height) {
+
+    const scene = document.getElementById("scene");
+    const hotspot = document.createElement("div");
+    const tip = document.createElement("span")
+
+    // audio when hover
+    hotspot.onmouseenter=()=>playFx('hover');
+
+    hotspot.className = "hotspot";
+    hotspot.id = "hotspot";
+
+    tip.className = "tip";
+    tip.textContent = "Investigate";
+
+    hotspot.style.left = `${x}%`;
+    hotspot.style.top = `${y}%`;
+    hotspot.style.width = `${width}%`;
+    hotspot.style.height = `${height}%`;
+
+    hotspot.addEventListener("click", () => {
+        loadRandomErrMessage();
+        playError();
+    });
+
+    scene.appendChild(hotspot)
+        .appendChild(tip);
+}
+
+function loadRandomErrMessage() {
+    const messages = [
+        "Not it. Keep searching.",
+        "Dead end. Try another spot.",
+        "Nothing useful here.",
+        "Keep investigating.",
+    ];
+
+    const randomMessage =
+        messages[Math.floor(Math.random() * messages.length)];
+
+    alert(randomMessage);
+}
+
+function playError() {
+
+    const audio = new Audio(
+        "https://actions.google.com/sounds/v1/alarms/beep_short.ogg"
+    );
+
+    audio.volume = 0.1;
+    audio.play().catch(() => {});
+}
+
+/** Utility function to get specific x and y coordinate **/
+function getDecoyXandY(img) {
+    img.addEventListener("click", (e) => {
+
+        const rect = img.getBoundingClientRect();
+
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+        const marker = document.createElement("div");
+
+        marker.style.position = "absolute";
+        marker.style.left = `${x}%`;
+        marker.style.top = `${y}%`;
+        marker.style.width = "12px";
+        marker.style.height = "12px";
+        marker.style.background = "red";
+        marker.style.borderRadius = "50%";
+
+        document.getElementById("scene").appendChild(marker);
+
+        console.log(`{ x: ${x.toFixed(2)}, y: ${y.toFixed(2)} }`);
+    });
+}
 
 function initAudio(){
   if(audioCtx || !audioEnabled) return;
