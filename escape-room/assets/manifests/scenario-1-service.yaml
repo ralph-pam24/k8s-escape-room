@@ -1,5 +1,5 @@
 # =====================================================================
-# Scenario 1 – Reception Desk (Service)
+# Scenario 1 - Reception Desk (Service)
 # Bug: Service selector does NOT match the pod labels.
 # Fix: Update Service.spec.selector to app=reception
 # =====================================================================
@@ -11,24 +11,17 @@ metadata:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: reception-content
+  name: reception-reward
   namespace: reception
 data:
-  index.html: |
-    2026-07-21T02:14:31Z INFO  reception-api v1.8.2 starting
-    2026-07-21T02:14:31Z INFO  Loading routing configuration
-    2026-07-21T02:14:32Z INFO  Service endpoint registration complete
-    2026-07-21T02:14:32Z INFO  Backend pods discovered: 2
-    2026-07-21T02:14:32Z INFO  Health checks passed
-    2026-07-21T02:14:33Z INFO  Visitor request accepted
-    2026-07-21T02:14:33Z INFO  Routing visitor to Reception Desk
+  reward.txt: |2
 
     =========================================================
                   RECEPTION DESK - FACILITY LOBBY
     =========================================================
 
-     ✅ You've resolved the issue.
-        The visitor can now reach the correct department.
+     You have resolved the issue.
+     The visitor can now reach the correct department.
 
      In Kubernetes, a Service uses a label selector to
      forward traffic to matching Pods. When the selector
@@ -36,13 +29,13 @@ data:
      backends and the application responds correctly.
 
      ---------------------------------------------------------
-                  CODE: "RECEPTION-OPEN-42"
+                  CODE: RECEPTION-OPEN-42
      ---------------------------------------------------------
 
      Copy the CODE WORD above and paste it into the browser
      game to unlock the next room.
 
-     Click "Next Step" below (after clicking CHECK) to enter
+     Click Next Step below after clicking CHECK to enter
      Room 2.
 
     =========================================================
@@ -65,16 +58,33 @@ spec:
       containers:
         - name: web
           image: busybox:1.36
-          command: ["busybox", "httpd", "-f", "-p", "5678", "-h", "/www"]
+          command:
+            - sh
+            - -c
+            - |
+              TS() { date -u '+%Y-%m-%dT%H:%M:%SZ'; }
+              mkdir -p /www
+              {
+                echo "$(TS) INFO  reception-api v1.8.2 starting"
+                echo "$(TS) INFO  Loading routing configuration"
+                echo "$(TS) INFO  Service endpoint registration complete"
+                echo "$(TS) INFO  Backend pods discovered: 2"
+                echo "$(TS) INFO  Health checks passed"
+                echo "$(TS) INFO  Visitor request accepted"
+                echo "$(TS) INFO  Routing visitor to Reception Desk"
+                cat /reward/reward.txt
+              } > /www/index.html
+              exec busybox httpd -f -p 5678 -h /www
           ports:
             - containerPort: 5678
           volumeMounts:
-            - name: content
-              mountPath: /www
+            - name: reward
+              mountPath: /reward
+              readOnly: true
       volumes:
-        - name: content
+        - name: reward
           configMap:
-            name: reception-content
+            name: reception-reward
 ---
 apiVersion: v1
 kind: Service
@@ -83,7 +93,7 @@ metadata:
   namespace: reception
 spec:
   selector:
-    app: reception-desk   # BUG: wrong selector
+    app: reception-desk   # BUG
   ports:
     - port: 80
       targetPort: 5678
@@ -97,4 +107,6 @@ spec:
   containers:
     - name: curl
       image: curlimages/curl:8.4.0
-      command: ["sleep", "3600"]
+      command:
+        - sleep
+        - "3600"
