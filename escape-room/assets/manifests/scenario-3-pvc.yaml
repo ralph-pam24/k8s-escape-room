@@ -152,9 +152,10 @@ spec:
               echo "$(TS) INFO  Storage expansion detected"
               echo "$(TS) INFO  Rebuilding archive catalog"
               echo "$(TS) INFO  Archive services online"
+              echo "$(TS) INFO Expansion plan written to /data/expansion-plan.txt"
               echo ""
               cp /reward/expansion-plan.txt /data/expansion-plan.txt
-              cat /data/expansion-plan.txt
+              
               sleep infinity
           volumeMounts:
             - name: rack
