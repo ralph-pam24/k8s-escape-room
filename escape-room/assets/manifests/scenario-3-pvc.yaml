@@ -44,13 +44,7 @@ metadata:
   name: archive-reward
   namespace: archive
 data:
-  expansion-plan.txt: |
-    2026-07-21T02:18:42Z INFO  archive-writer v3.2.1 starting
-    2026-07-21T02:18:42Z INFO  Loading archive index
-    2026-07-21T02:18:43Z INFO  Storage volume mounted at /data
-    2026-07-21T02:18:44Z INFO  Storage expansion detected
-    2026-07-21T02:18:44Z INFO  Rebuilding archive catalog
-    2026-07-21T02:18:45Z INFO  Archive services online
+  expansion-plan.txt: |2
 
     =========================================================
                 STORAGE RACK - ARCHIVE WAREHOUSE
