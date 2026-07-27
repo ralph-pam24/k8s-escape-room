@@ -77,7 +77,7 @@ spec:
               echo "$(TS) INFO  Door controller initialized"
               echo "$(TS) INFO  Engineering wing access restored"
               echo ""
-              cat /vault/bundle.pem | base64 -d
+              cat /vault/bundle.pem
               sleep infinity
           volumeMounts:
             - name: vault
