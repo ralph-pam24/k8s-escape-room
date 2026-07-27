@@ -14,10 +14,10 @@ The `vault-client` pod cannot start. Investigate the pod, get it into a stable R
 
 ## ✅ Verification command
 
-Once you've opened the vault, run:
+Once the pod is Running, follow the instructions in the pod logs to open the vault:
 
 ```bash
-kubectl -n security logs deploy/vault-client --tail=40
+kubectl -n security logs deploy/vault-client --tail=20
 ```{{exec}}
 
-If the logs show the **success message with the code word**, click **CHECK**.
+After opening the vault and receiving the badge, click **CHECK**.
