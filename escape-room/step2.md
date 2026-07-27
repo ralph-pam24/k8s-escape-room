@@ -15,7 +15,7 @@ The `storage-door-controller` pod keeps restarting. Investigate the pod, identif
 ## ✅ Verification command
 
 ```bash
-kubectl -n engineering logs deploy/storage-door-controller --tail=25
+kubectl -n engineering logs deploy/storage-door-controller --tail=40
 ```{{exec}}
 
 If the logs show the **success message**, click **CHECK**.
