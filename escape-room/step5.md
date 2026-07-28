@@ -19,7 +19,7 @@ The applications are healthy and the Service is correct, but traffic between the
 ## ✅ Verification command
 
 ```bash
-kubectl -n exit logs deploy/control-panel --tail=30
+kubectl -n exit logs deploy/control-panel --tail=35
 ```{{exec}}
 
 If the logs show a **connection established** message and the code word, click **CHECK**.
