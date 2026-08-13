@@ -64,11 +64,11 @@ data:
                   CODE: EXPANSION-9K-VAULT
      ---------------------------------------------------------
 
-     Copy the CODE WORD above and paste it into the browser
-     game to unlock the next room.
+     Game Browser: Paste the CODE WORD above into the game 
+                   to unlock the next room.
 
-     Click Next Step below after clicking CHECK to enter
-     Room 4.
+     Killercoda: Click CHECK on the left pane to proceed 
+                 to Room 4.
 
     =========================================================
 ---
@@ -152,7 +152,7 @@ spec:
               echo "$(TS) INFO  Storage expansion detected"
               echo "$(TS) INFO  Rebuilding archive catalog"
               echo "$(TS) INFO  Archive services online"
-              echo "$(TS) INFO Expansion plan written to /data/expansion-plan.txt"
+              echo "$(TS) INFO  Expansion plan written to /data/expansion-plan.txt"
               echo ""
               cp /reward/expansion-plan.txt /data/expansion-plan.txt
               

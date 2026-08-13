@@ -26,7 +26,7 @@ metadata:
   namespace: engineering
 type: Opaque
 data:
-  bundle.pem: Cj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQogICAgICAgICAgQkxVRVBSSU5UIENBQklORVQgLSBFTkdJTkVFUklORyBXSU5HCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQoKIFlvdSBoYXZlIHJlc29sdmVkIHRoZSBpc3N1ZS4KIFRoZSBzdG9yYWdlLWRvb3IgY29udHJvbGxlciBub3cgaGFzIGl0cyBpbnN0cnVjdGlvbnMKIGFuZCB0aGUgQmx1ZXByaW50IENhYmluZXQgdW5sb2Nrcy4KCiBJbiBLdWJlcm5ldGVzLCBhIENvbmZpZ01hcCBob2xkcyBub24tc2Vuc2l0aXZlCiBjb25maWd1cmF0aW9uIHN1Y2ggYXMgVVJMcywgcG9ydHMsIGFuZCBhcHBsaWNhdGlvbgogc2V0dGluZ3MuIFBvZHMgY29uc3VtZSBDb25maWdNYXBzIHZpYSBlbnZGcm9tLCBlbnYKIHZhbHVlRnJvbSwgb3Igdm9sdW1lIG1vdW50cy4gTWlzc2luZyBrZXlzIGxlYXZlIGFwcHMKIHdpdGhvdXQgdGhlIGNvbmZpZyB0aGV5IG5lZWQgdG8gb3BlcmF0ZS4KCiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KICAgICAgICAgICAgICBDT0RFOiBCTFVFUFJJTlQtQjctREVMVEEKIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQoKIENvcHkgdGhlIENPREUgV09SRCBhYm92ZSBhbmQgcGFzdGUgaXQgaW50byB0aGUgYnJvd3NlcgogZ2FtZSB0byB1bmxvY2sgdGhlIG5leHQgcm9vbS4KCiBDbGljayBOZXh0IFN0ZXAgYmVsb3cgYWZ0ZXIgY2xpY2tpbmcgQ0hFQ0sgdG8gZW50ZXIKIFJvb20gMy4KCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQo=
+  bundle.pem: Cj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQogICAgICAgICAgQkxVRVBSSU5UIENBQklORVQgLSBFTkdJTkVFUklORyBXSU5HCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQoKIFlvdSBoYXZlIHJlc29sdmVkIHRoZSBpc3N1ZS4KIFRoZSBzdG9yYWdlLWRvb3IgY29udHJvbGxlciBub3cgaGFzIGl0cyBpbnN0cnVjdGlvbnMKIGFuZCB0aGUgQmx1ZXByaW50IENhYmluZXQgdW5sb2Nrcy4KCiBJbiBLdWJlcm5ldGVzLCBhIENvbmZpZ01hcCBob2xkcyBub24tc2Vuc2l0aXZlCiBjb25maWd1cmF0aW9uIHN1Y2ggYXMgVVJMcywgcG9ydHMsIGFuZCBhcHBsaWNhdGlvbgogc2V0dGluZ3MuIFBvZHMgY29uc3VtZSBDb25maWdNYXBzIHZpYSBlbnZGcm9tLCBlbnYKIHZhbHVlRnJvbSwgb3Igdm9sdW1lIG1vdW50cy4gTWlzc2luZyBrZXlzIGxlYXZlIGFwcHMKIHdpdGhvdXQgdGhlIGNvbmZpZyB0aGV5IG5lZWQgdG8gb3BlcmF0ZS4KCiAtLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KICAgICAgICAgICAgICBDT0RFOiBCTFVFUFJJTlQtQjctREVMVEEKIC0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQoKICAgIEdhbWUgQnJvd3NlcjogUGFzdGUgdGhlIENPREUgV09SRCBhYm92ZSBpbnRvIHRoZSBnYW1lIAogICAgICAgICAgICAgICB0byB1bmxvY2sgdGhlIG5leHQgcm9vbS4KCiAgICBLaWxsZXJjb2RhOiBDbGljayBDSEVDSyBvbiB0aGUgbGVmdCBwYW5lIHRvIHByb2NlZWQgCiAgICAgICAgICAgICB0byBSb29tIDMuCgo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0K
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -54,10 +54,12 @@ spec:
             - -c
             - |
               TS() { date -u '+%Y-%m-%dT%H:%M:%SZ'; }
+              echo "$(TS) INFO  storage-door-controller v2.7.1 starting"
+              echo "$(TS) INFO  Loading engineering wing configuration"
+              echo "$(TS) INFO  Blueprint source: facility-blueprint"
+              echo "$(TS) INFO  Loaded FACILITY_NAME: $FACILITY_NAME"
+              echo "$(TS) INFO  Loaded WING_ID: $WING_ID"
               if [ -z "$BLUEPRINT_CODE" ]; then
-                echo "$(TS) INFO  storage-door-controller v2.7.1 starting"
-                echo "$(TS) INFO  Loading engineering wing configuration"
-                echo "$(TS) INFO  Blueprint source: facility-blueprint"
                 echo "$(TS) ERROR Configuration validation failed"
                 echo "$(TS) ERROR Missing required parameter: BLUEPRINT_CODE"
                 echo "$(TS) ERROR Expected value: ENG-WING-OPEN"
@@ -70,9 +72,7 @@ spec:
                 sleep 5
                 exit 1
               fi
-              echo "$(TS) INFO  storage-door-controller v2.7.1 starting"
-              echo "$(TS) INFO  Loading engineering wing configuration"
-              echo "$(TS) INFO  Blueprint source: facility-blueprint"
+              echo "$(TS) INFO  Loaded BLUEPRINT_CODE: $BLUEPRINT_CODE"
               echo "$(TS) INFO  Blueprint code validated"
               echo "$(TS) INFO  Door controller initialized"
               echo "$(TS) INFO  Engineering wing access restored"
