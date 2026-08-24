@@ -1,6 +1,5 @@
 <!doctype html>
 <html lang="en">
-
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -20,11 +19,9 @@
       --red: #ff4d6d;
       --yellow: #ffd166;
     }
-
     * {
       box-sizing: border-box
     }
-
     body {
       margin: 0;
       background: var(--bg);
@@ -32,7 +29,6 @@
       font-family: Arial, Helvetica, sans-serif;
       min-height: 100vh;
     }
-
     body:before {
       content: "";
       position: fixed;
@@ -44,45 +40,37 @@
       mix-blend-mode: screen;
       opacity: .35
     }
-
     button {
       font: inherit
     }
-
     .screen {
       display: none !important;
       min-height: 100vh
     }
-
     .screen.active {
       display: block !important
     }
-
     .intro {
       position: relative;
       place-items: center;
       overflow: hidden;
       padding: 40px 20px
     }
-
     .intro.active {
       display: grid !important
     }
-
     .intro-bg {
       position: absolute;
       inset: 0;
       background: url('images/overview.jpg') center/cover no-repeat;
       filter: brightness(.78) contrast(1.08);
     }
-
     .intro-bg:after {
       content: "";
       position: absolute;
       inset: 0;
       background: radial-gradient(circle at center, rgba(8, 12, 18, .05), rgba(4, 6, 10, .62) 82%)
     }
-
     .intro-card {
       position: relative;
       max-width: 880px;
@@ -93,14 +81,12 @@
       box-shadow: 0 0 45px rgba(57, 169, 255, .18);
       backdrop-filter: blur(1px)
     }
-
     .eyebrow {
       letter-spacing: 4px;
       color: var(--green);
       font-size: 12px;
       text-transform: uppercase
     }
-
     .title {
       font-size: clamp(34px, 6vw, 70px);
       font-weight: 900;
@@ -109,14 +95,12 @@
       color: #eaf6ff;
       text-shadow: 0 0 30px rgba(57, 169, 255, .6)
     }
-
     .subtitle {
       font-size: 18px;
       color: var(--blue);
       letter-spacing: 5px;
       text-transform: uppercase
     }
-
     .intercom {
       margin: 26px 0;
       padding: 18px 20px;
@@ -125,21 +109,18 @@
       line-height: 1.65;
       color: var(--muted)
     }
-
     .meta {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
       margin: 20px 0
     }
-
     .pill {
       border: 1px solid rgba(255, 255, 255, .18);
       padding: 8px 12px;
       color: var(--muted);
       background: rgba(255, 255, 255, .04)
     }
-
     .btn {
       border: 1px solid var(--blue);
       background: rgba(57, 169, 255, .08);
@@ -150,19 +131,16 @@
       letter-spacing: 2px;
       font-weight: 700
     }
-
     .btn:hover {
       background: var(--blue);
       color: #03101a;
       box-shadow: 0 0 22px rgba(57, 169, 255, .45)
     }
-
     .btn.secondary {
       border-color: #566b7b;
       background: transparent;
       color: var(--muted)
     }
-
     .btn:disabled,
     .btn.used {
       cursor: not-allowed;
@@ -172,14 +150,12 @@
       background: rgba(255, 255, 255, .03);
       box-shadow: none
     }
-
     .btn:disabled:hover,
     .btn.used:hover {
       background: rgba(255, 255, 255, .03);
       color: #73889a;
       box-shadow: none
     }
-
     .hud {
       position: sticky;
       top: 0;
@@ -193,7 +169,6 @@
       border-bottom: 1px solid rgba(57, 169, 255, .22);
       backdrop-filter: blur(6px)
     }
-
     .hud small {
       display: block;
       color: var(--dim);
@@ -201,23 +176,19 @@
       text-transform: uppercase;
       font-size: 10px
     }
-
     .hud b {
       color: var(--blue)
     }
-
     .timer {
       font-size: 24px;
       color: var(--green);
       font-weight: 900
     }
-
     .inventory {
       display: flex;
       gap: 8px;
       justify-content: flex-end
     }
-
     .slot {
       width: 34px;
       height: 34px;
@@ -226,18 +197,15 @@
       place-items: center;
       background: rgba(255, 255, 255, .03)
     }
-
     .slot.filled {
       border-color: var(--green);
       box-shadow: 0 0 14px rgba(77, 255, 181, .3)
     }
-
     .game-wrap {
       max-width: 1180px;
       margin: 0 auto;
       padding: 20px
     }
-
     .topline {
       display: flex;
       justify-content: space-between;
@@ -245,38 +213,37 @@
       align-items: end;
       margin-bottom: 10px
     }
-
     .scene-name {
       font-weight: 900;
       letter-spacing: 2px;
       text-transform: uppercase;
       color: #dff2ff
     }
-
     .objective {
       color: var(--yellow);
       font-weight: 700
     }
-
     .scene {
       position: relative;
+      width: fit-content;
+      max-width: 100%;
+      margin: 0 auto;
       border: 1px solid rgba(57, 169, 255, .28);
       background: #0e141c;
       box-shadow: 0 0 32px rgba(0, 0, 0, .5);
       overflow: hidden
     }
-
     .scene img {
       display: block;
-      width: 100%;
+      width: auto;
+      max-width: 100%;
       height: auto;
+      max-height: calc(100vh - 210px);
       user-select: none
     }
-
     .scene.theme-secret img {
       filter: brightness(1.10) contrast(0.80) saturate(0.80) sepia(.03)
     }
-
     .scene.theme-secret::before {
       content: "";
       position: absolute;
@@ -286,9 +253,8 @@
       background: radial-gradient(circle at 91% 42%, rgba(220, 20, 40, .12), transparent 16%), radial-gradient(circle at 52% 17%, rgba(20, 80, 120, .10), transparent 26%), linear-gradient(180deg, rgba(0, 0, 0, .02), rgba(0, 0, 0, .12));
       mix-blend-mode: multiply
     }
-
     .scene.theme-secret::after {
-      content: "SECURITY SYSTEM UNSTABLE  •  VAULT ACCESS DEGRADED";
+      content: "SECURITY SYSTEM UNSTABLE  \2022  VAULT ACCESS DEGRADED";
       position: absolute;
       right: 3%;
       top: 3%;
@@ -300,11 +266,9 @@
       text-shadow: 0 0 10px rgba(255, 0, 0, .75);
       pointer-events: none
     }
-
     .scene.theme-secret .scene-fx {
       display: block
     }
-
     .scene-fx {
       display: none;
       position: absolute;
@@ -312,7 +276,6 @@
       z-index: 2;
       pointer-events: none
     }
-
     .scene-fx:before {
       content: "AUTH FAILED";
       position: absolute;
@@ -325,7 +288,6 @@
       transform: rotate(-8deg);
       text-shadow: 0 0 9px rgba(255, 0, 0, .16)
     }
-
     .scene-fx:after {
       content: "ACCESS DENIED";
       position: absolute;
@@ -337,26 +299,22 @@
       color: rgba(255, 60, 80, .20);
       transform: rotate(4deg)
     }
-
     .hotspot {
       position: absolute;
       border: 2px solid transparent;
       cursor: pointer;
       z-index: 3
     }
-
     .hotspot:hover {
       border-color: var(--blue);
       box-shadow: 0 0 0 9999px rgba(57, 169, 255, .02), 0 0 22px rgba(57, 169, 255, .9);
       background: rgba(57, 169, 255, .07);
       filter: brightness(1.2)
     }
-
     .hotspot:hover .tip {
       opacity: 1;
       transform: translate(-50%, -8px)
     }
-
     .miss-toast {
       position: absolute;
       left: 50%;
@@ -376,19 +334,16 @@
       transition: opacity .18s ease, transform .18s ease;
       box-shadow: 0 0 18px rgba(255, 0, 40, .25)
     }
-
     .miss-toast.show {
       opacity: 1;
       transform: translate(-50%, 0)
     }
-
     .miss-toast.hit {
       background: rgba(6, 22, 16, .9);
       border-color: rgba(77, 255, 181, .55);
       color: var(--green);
       box-shadow: 0 0 18px rgba(77, 255, 181, .28)
     }
-
     .tip {
       position: absolute;
       left: 50%;
@@ -404,7 +359,6 @@
       font-size: 12px;
       letter-spacing: 1.5px
     }
-
     .hint {
       text-align: center;
       color: var(--dim);
@@ -413,28 +367,23 @@
       letter-spacing: 2px;
       text-transform: uppercase
     }
-
     .progress {
       display: flex;
       gap: 8px;
       justify-content: center;
       margin-top: 14px
     }
-
     .pip {
       height: 5px;
       width: 56px;
       background: #25313c
     }
-
     .pip.active {
       background: var(--blue)
     }
-
     .pip.done {
       background: var(--green)
     }
-
     .modal {
       position: fixed;
       inset: 0;
@@ -445,11 +394,9 @@
       justify-content: center;
       padding: 20px
     }
-
     .modal.open {
       display: flex
     }
-
     .box {
       max-width: 860px;
       width: 100%;
@@ -460,7 +407,6 @@
       box-shadow: 0 0 50px rgba(57, 169, 255, .18);
       padding: 24px
     }
-
     .box-head {
       display: flex;
       justify-content: space-between;
@@ -470,19 +416,16 @@
       padding-bottom: 14px;
       margin-bottom: 18px
     }
-
     .box h2 {
       margin: 4px 0 0;
       font-size: 24px
     }
-
     .tag {
       font-size: 11px;
       color: var(--green);
       letter-spacing: 3px;
       text-transform: uppercase
     }
-
     .x {
       background: transparent;
       color: var(--muted);
@@ -491,16 +434,13 @@
       height: 32px;
       cursor: pointer
     }
-
     .x:hover {
       color: var(--red);
       border-color: var(--red)
     }
-
     .section {
       margin: 18px 0
     }
-
     .section h3 {
       font-size: 13px;
       margin: 0 0 8px;
@@ -508,13 +448,11 @@
       letter-spacing: 2px;
       text-transform: uppercase
     }
-
     .section p {
       line-height: 1.65;
       color: var(--muted);
       margin: 0
     }
-
     .badge {
       display: inline-block;
       border: 1px solid rgba(57, 169, 255, .35);
@@ -523,36 +461,29 @@
       margin-bottom: 8px;
       background: rgba(57, 169, 255, .08)
     }
-
     .problems {
       border-left: 4px solid var(--red);
       background: rgba(255, 77, 109, .045);
       padding: 14px 16px;
       color: #ffb2c0
     }
-
     .problems div {
       margin: 5px 0
     }
-
     .ok {
       color: var(--green)
     }
-
     .bad {
       color: var(--red)
     }
-
     .warn {
       color: var(--yellow)
     }
-
     .challenge {
       margin-top: 20px;
       padding-top: 18px;
       border-top: 1px solid rgba(255, 255, 255, .12)
     }
-
     .code {
       background: rgba(5, 11, 16, .70);
       border: 1px solid rgba(57, 169, 255, .18);
@@ -564,7 +495,6 @@
       font-size: 13px;
       white-space: pre-wrap
     }
-
     .unlock-input {
       width: 100%;
       margin-top: 14px;
@@ -578,22 +508,18 @@
       text-transform: uppercase;
       outline: none;
     }
-
     .unlock-input:focus {
       border-color: var(--blue);
       box-shadow: 0 0 18px rgba(57, 169, 255, .25);
     }
-
     .unlock-input.correct {
       border-color: var(--green);
       color: var(--green);
     }
-
     .unlock-input.wrong {
       border-color: var(--red);
       color: var(--red);
     }
-
     .feedback {
       display: none;
       margin-top: 12px;
@@ -601,11 +527,9 @@
       border: 1px solid rgba(255, 255, 255, .14);
       line-height: 1.5
     }
-
     .feedback.show {
       display: block
     }
-
     .reward {
       display: none;
       margin-top: 18px;
@@ -613,75 +537,61 @@
       border: 1px solid rgba(77, 255, 181, .35);
       background: rgba(77, 255, 181, .07)
     }
-
     .reward.show {
       display: block
     }
-
     .reward b {
       color: var(--green)
     }
-
     .win {
       place-items: center;
       text-align: center;
       padding: 40px 20px
     }
-
     .win.active {
       display: grid !important
     }
-
     .win-card {
       max-width: 760px;
       border: 1px solid rgba(77, 255, 181, .45);
       background: rgba(12, 20, 28, .60);
       padding: 30px
     }
-
     .win h1 {
       color: var(--green);
       font-size: 42px
     }
-
     .summary {
       width: 100%;
       border-collapse: collapse;
       margin-top: 18px;
       text-align: left
     }
-
     .summary th,
     .summary td {
       border-bottom: 1px solid rgba(255, 255, 255, .1);
       padding: 10px;
       color: var(--muted)
     }
-
     .summary th {
       color: var(--blue)
     }
-
     @media(max-width:720px) {
       .hud {
         grid-template-columns: 1fr
       }
-
       .inventory {
         justify-content: flex-start
       }
-
       .topline {
         display: block
       }
-
       .pip {
         width: 36px
       }
     }
   </style>
 </head>
-
 <body>
   <section id="intro" class="screen active intro">
     <div class="intro-bg"></div>
@@ -691,13 +601,12 @@
       <div class="subtitle">The Locked Facility</div>
       <div class="intercom">"The exit door is locked. Five critical systems have failed throughout the facility. To
         escape, restore each system and recover the hidden objects that unlock the next area. Every object represents a
-        facility component — and a Kubernetes component."</div>
-      <div class="meta"><span class="pill">⏱ 20-minute limit</span><span class="pill">👤 Solo Player</span><span
-          class="pill">🎯 5 Scenarios</span><span class="pill">📁 Offline HTML</span></div>
+        facility component &mdash; and a Kubernetes component."</div>
+      <div class="meta"><span class="pill">&#9201; 20-minute limit</span><span class="pill">&#128100; Solo Player</span><span
+          class="pill">&#127919; 5 Scenarios</span><span class="pill">&#128193; Offline HTML</span></div>
       <button class="btn" onclick="startGame()">Enter Facility</button>
     </div>
   </section>
-
   <section id="game" class="screen">
     <div class="hud">
       <div><small>Scenario</small><b id="scenario-count">1 / 5</b></div>
@@ -724,14 +633,13 @@
         <div class="progress" id="progress"></div>
     </main>
   </section>
-
   <div class="modal" id="modal">
     <div class="box">
       <div class="box-head">
         <div>
           <div class="tag" id="modal-tag">Object Found</div>
           <h2 id="modal-title"></h2>
-        </div><button class="x" onclick="closeModal()">×</button>
+        </div><button class="x" onclick="closeModal()">&times;</button>
       </div>
       <div class="section">
         <h3>Escape Room Story</h3>
@@ -746,7 +654,7 @@
         <div class="problems" id="problems"></div>
       </div>
       <div class="challenge">
-        <h3>⚡ Enter Unlock Code</h3>
+        <h3>&#9889; Enter Unlock Code</h3>
         <p id="instruction" style="color:var(--muted);line-height:1.6"></p>
         <div class="code" id="code"></div>
         <input type="text" id="unlock-code" class="unlock-input" placeholder="TYPE UNLOCK CODE HERE" autocomplete="off" spellcheck="false">
@@ -756,7 +664,6 @@
       </div>
     </div>
   </div>
-
   <section id="win" class="screen win">
     <div class="win-card">
       <div class="eyebrow">All Systems Restored</div>
@@ -797,11 +704,10 @@
       </table><br><button class="btn" onclick="location.reload()">Play Again</button>
     </div>
   </section>
-
   <script>
     const scenarios = [
       {
-        title: 'Scenario 1 — Reception Desk (Service)',
+        title: 'Scenario 1 &mdash; Reception Desk (Service)',
         img: 'images/scenario1.jpg',
         objective: 'Find the Reception Terminal.',
         obj: 'Reception Terminal',
@@ -817,11 +723,11 @@
         instruction: 'Enter the unlock code to restore Service routing and release the Reception Access Card.',
         code: 'The reception service is not routing traffic correctly.\nInspect the Service and the application pods to identify the problem and restore connectivity.',
         feedback: 'Correct. Kubernetes Services route traffic by matching selector labels to pod labels exactly.',
-        reward: 'The reception terminal verifies the route and releases the Reception Access Card. Next: Engineering Wing — Blueprint Cabinet.',
-        icon: '🗂'
+        reward: 'The reception terminal verifies the route and releases the Reception Access Card. Next: Engineering Wing &mdash; Blueprint Cabinet.',
+        icon: '\ud83d\uddc2'
       },
       {
-        title: 'Scenario 2 — Blueprint Cabinet (ConfigMap)',
+        title: 'Scenario 2 &mdash; Blueprint Cabinet (ConfigMap)',
         img: 'images/scenario2.jpg',
         objective: 'Find the Facility Blueprint.',
         obj: 'Facility Blueprint',
@@ -836,12 +742,12 @@
         problems: [['Application is reachable', 'ok'], ['Application is reporting configuration errors', 'bad'], ['Investigate why the controller cannot start correctly', 'warn']],
         instruction: 'Identify the configuration problem preventing the controller from reaching a stable Running state.',
         code: 'The storage door controller depends on runtime configuration.\nInspect the application\'s configuration and determine why it cannot start successfully.',
-        feedback: 'Correct. The key exists, but the value is empty. Set DB_HOST to the required backend/database endpoint.',
-        reward: 'The Blueprint Cabinet unlocks. Reward: Facility Blueprint. Next: Archive Warehouse — Storage Expansion Area.',
-        icon: '📐'
+        feedback: 'Correct. The ConfigMap was missing the required key BLUEPRINT_CODE. Adding it with the value ENG-WING-OPEN and restarting the pod restores the controller.',
+        reward: 'The Blueprint Cabinet unlocks. Reward: Facility Blueprint. Next: Archive Warehouse &mdash; Storage Expansion Area.',
+        icon: '\ud83d\udcd0'
       },
       {
-        title: 'Scenario 3 — Confidential Storage File (PVC)',
+        title: 'Scenario 3 &mdash; Confidential Storage File (PVC)',
         img: 'images/scenario3.jpg',
         objective: 'Find the Confidential Storage File.',
         obj: 'Confidential Storage File',
@@ -858,10 +764,10 @@
         code: 'The archive storage is not providing enough capacity for the workload.\n\nInspect the workload, PVC, and StorageClass to determine what needs to be changed.',
         feedback: 'Correct. Patch spec.resources.requests.storage to a larger value. Do not delete the PVC because that risks data loss.',
         reward: 'The archive storage system expands. Reward: Storage Expansion Records. Next: Security Vault Sector.',
-        icon: '📦'
+        icon: '\ud83d\udce6'
       },
       {
-        title: 'Scenario 4 — Security Vault (Secret)',
+        title: 'Scenario 4 &mdash; Security Vault (Secret)',
         img: 'images/scenario4.jpg',
         theme: 'theme-secret',
         objective: 'Find the Level 5 Security Badge.',
@@ -877,12 +783,12 @@
         problems: [['Application can access storage', 'ok'], ['Configuration is present', 'ok'], ['Application cannot authenticate', 'bad'], ['Investigate the application\'s credentials and startup failure', 'warn']],
         instruction: 'Restore the security service\'s access to the required credentials and complete the vault activation.',
         code: 'The security service cannot authenticate with its backend.\nInvestigate the pod configuration and available credentials.',
-        feedback: 'Correct. The Pod references db-credentials, but the actual Secret is db-creds. Fix the name mismatch.',
+        feedback: 'Correct. The Deployment referenced a Secret named vault-creds, which does not exist. Pointing it to vault-credentials lets the pod start and unlock the vault.',
         reward: 'The vault opens. Reward: Level 5 Security Badge. Next: Security Gate Door.',
-        icon: '🔐'
+        icon: '\ud83d\udd10'
       },
       {
-        title: 'Scenario 5 — Security Gate Door (NetworkPolicy)',
+        title: 'Scenario 5 &mdash; Security Gate Door (NetworkPolicy)',
         img: 'images/scenario5.jpg',
         objective: 'Activate the Final Exit Door.',
         obj: 'Security Gate Door',
@@ -897,16 +803,14 @@
         problems: [['All previous issues are fixed', 'ok'], ['Applications are healthy', 'ok'], ['Frontend cannot reach backend', 'bad'], ['Investigate why traffic between the applications is blocked', 'warn']],
         instruction: 'Restore the required network communication and open the exit door.',
         code: 'The applications are healthy, but communication between them is still blocked.\n\nInspect the NetworkPolicy and determine which traffic should be permitted.',
-        feedback: 'Correct. The policy allows the wrong source selector. Allow app=frontend to restore frontend-to-backend communication.',
+        feedback: 'Correct. The NetworkPolicy denied all ingress to the exit-door. Allowing traffic from the control-panel (or removing the policy) restores communication and opens the exit.',
         reward: 'The Security Gate Door unlocks. ALL FACILITY SYSTEMS RESTORED. You escaped.',
-        icon: '🚪'
+        icon: '\ud83d\udeaa'
       }
     ];
-
     let current = 0, timeLeft = 1200, timerId = null, attempts = 0, completed = [], hintUsed = [false, false, false, false, false];
     let audioCtx = null, masterGain = null, ambientNodes = [], audioEnabled = true;
     const $ = id => document.getElementById(id);
-
     function startGame() {
       $("intro").classList.remove("active");
       $("intro").style.display = "none";
@@ -923,7 +827,6 @@
       loadScenario();
       timerId = setInterval(tick, 1000);
     }
-
     function tick() {
       timeLeft--;
       const m = String(Math.floor(timeLeft / 60)).padStart(2, "0"),
@@ -935,7 +838,6 @@
         location.reload();
       }
     }
-
     function buildInventory() {
       $("inventory").innerHTML = "";
       for (let i = 0; i < 5; i++) {
@@ -945,7 +847,6 @@
         $("inventory").appendChild(d);
       }
     }
-
     function buildProgress() {
       $("progress").innerHTML = "";
       for (let i = 0; i < 5; i++) {
@@ -955,7 +856,6 @@
         $("progress").appendChild(d);
       }
     }
-
     function loadScenario() {
       const s = scenarios[current];
       $("scene").className = "scene " + (s.theme || "");
@@ -981,7 +881,6 @@
       updateProgress();
       addDecoys();
     }
-
     function updateProgress() {
       for (let i = 0; i < 5; i++) {
         $("pip" + i).className = "pip" + (i < current ? " done" : i === current ? " active" : "");
@@ -989,7 +888,6 @@
         $("slot" + i).textContent = completed[i] ? scenarios[i].icon : "";
       }
     }
-
     function showHint() {
       const s = scenarios[current];
       if (hintUsed[current]) return;
@@ -1003,7 +901,6 @@
       }
       playFx("hint");
     }
-
     function openModal() {
       const s = scenarios[current];
       playFx("found");
@@ -1019,33 +916,26 @@
       $("feedback").textContent = "";
       $("reward").className = "reward";
       $("reward").innerHTML = "";
-
       $("problems").innerHTML = s.problems
-        .map(p => `<div class="${p[1]}">${p[1] === "ok" ? "✓" : p[1] === "warn" ? "!" : "✗"} ${p[0]}</div>`)
+        .map(p => `<div class="${p[1]}">${p[1] === "ok" ? "\u2713" : p[1] === "warn" ? "!" : "\u2717"} ${p[0]}</div>`)
         .join("");
-
       const input = $("unlock-code");
       input.value = "";
       input.className = "unlock-input";
       input.disabled = false;
       input.focus();
     }
-
     function closeModal() {
       $("modal").classList.remove("open");
     }
-
     function submitCode() {
       const s = scenarios[current];
       const input = $("unlock-code");
       const entered = input.value.trim().toUpperCase();
       const correctCode = s.unlockCode.toUpperCase();
-
       attempts++;
-
       const fb = $("feedback");
       fb.className = "feedback show";
-
       if (entered === correctCode) {
         playFx("success");
         input.classList.add("correct");
@@ -1055,11 +945,10 @@
         fb.textContent = s.feedback;
         completed[current] = true;
         updateProgress();
-
         const r = $("reward");
         r.className = "reward show";
         r.innerHTML = `<b>Reward Unlocked:</b><br>${s.reward}<br><br>
-          <button class="btn" onclick="nextScenario()">${current === 4 ? "Open Final Exit Door" : "Proceed to Next Room →"}</button>`;
+          <button class="btn" onclick="nextScenario()">${current === 4 ? "Open Final Exit Door" : "Proceed to Next Room \u2192"}</button>`;
       } else {
         playFx("error");
         input.classList.add("wrong");
@@ -1069,14 +958,12 @@
         setTimeout(() => input.classList.remove("wrong"), 800);
       }
     }
-
     // Allow Enter key to submit
     document.addEventListener("keydown", function (e) {
       if (e.key === "Enter" && $("modal").classList.contains("open")) {
         submitCode();
       }
     });
-
     function nextScenario() {
       closeModal();
       if (current === 4) {
@@ -1090,10 +977,8 @@
       current++;
       loadScenario();
     }
-
     const missLines = ['Not it. Keep searching.', 'That is not the object you need.', 'Nothing useful here. Look again.', 'Wrong item. Search the room again.', 'Dead end. Try another spot.'];
-    const hitLines = ['Found it! Investigating…', 'That is the one. Opening file…', 'Object identified. Loading details…', 'Got it. Pulling up the record…'];
-
+    const hitLines = ['Found it! Investigating\u2026', 'That is the one. Opening file\u2026', 'Object identified. Loading details\u2026', 'Got it. Pulling up the record\u2026'];
     function showMiss() {
       playFx("error");
       const t = $("miss-toast");
@@ -1105,7 +990,6 @@
       clearTimeout(showMiss._tmr);
       showMiss._tmr = setTimeout(() => t.classList.remove("show"), 1600);
     }
-
     function showFound() {
       playFx("found");
       const t = $("miss-toast");
@@ -1121,7 +1005,6 @@
         openModal();
       }, 550);
     }
-
     function addDecoys() {
       const scenario = scenarios[current];
       clearDecoys();
@@ -1129,11 +1012,9 @@
         addHotspot(d.x, d.y, d.width, d.height);
       });
     }
-
     function clearDecoys() {
       document.querySelectorAll('#decoy').forEach(el => el.remove());
     }
-
     function addHotspot(x, y, width, height) {
       const scene = document.getElementById("scene");
       const hotspot = document.createElement("div");
@@ -1153,13 +1034,11 @@
       });
       scene.appendChild(hotspot).appendChild(tip);
     }
-
     function playError() {
       const audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
       audio.volume = 0.1;
       audio.play().catch(() => {});
     }
-
     function initAudio() {
       if (audioCtx || !audioEnabled) return;
       try {
@@ -1167,17 +1046,14 @@
         masterGain = audioCtx.createGain();
         masterGain.gain.value = 0.16;
         masterGain.connect(audioCtx.destination);
-
         const humGain = audioCtx.createGain();
         humGain.gain.value = 0.05;
         humGain.connect(masterGain);
-
         const hum = audioCtx.createOscillator();
         hum.type = 'sine';
         hum.frequency.value = 48;
         hum.connect(humGain);
         hum.start();
-
         const pulseGain = audioCtx.createGain();
         pulseGain.gain.value = 0.018;
         pulseGain.connect(masterGain);
@@ -1186,7 +1062,6 @@
         pulse.frequency.value = 96;
         pulse.connect(pulseGain);
         pulse.start();
-
         ambientNodes = [hum, pulse, humGain, pulseGain];
       } catch (e) {
         audioEnabled = false;
@@ -1197,7 +1072,6 @@
         }
       }
     }
-
     function playFx(type) {
       if (!audioEnabled) return;
       if (!audioCtx) initAudio();
@@ -1226,7 +1100,6 @@
         o.stop(now + dur + .03);
       } catch (e) {}
     }
-
     function toggleAudio() {
       audioEnabled = !audioEnabled;
       const b = $('audio-toggle');
@@ -1245,5 +1118,4 @@
     }
   </script>
 </body>
-
 </html>
