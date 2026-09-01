@@ -590,7 +590,90 @@
         width: 36px
       }
     }
+    /* ===== TUTORIAL OVERLAY ===== */
+  #enterBtn.locked{opacity:.45;cursor:not-allowed;border-color:#4b5965;color:#73889a;background:rgba(255,255,255,.03);box-shadow:none}
+  #enterBtn.locked:hover{background:rgba(255,255,255,.03);color:#73889a;box-shadow:none}
+  .tut{position:fixed;inset:0;z-index:200;display:none;background:#04060a;overflow:hidden;
+    font-family:"Courier New",Consolas,monospace}
+  .tut.open{display:block}
+  .tut .tstage{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden;opacity:0;transition:opacity 1s}
+  .tut .tstage.live{opacity:1}
+  .tut .tbg{position:absolute;inset:0;z-index:0;background:url('images/overview.jpg') center/cover no-repeat;
+    filter:brightness(.62) contrast(1.05) saturate(1)}
+  .tut .tbg:after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,rgba(6,10,16,.15),rgba(2,4,7,.62) 82%)}
+  .tut .tstage:before{content:"";position:absolute;inset:0;pointer-events:none;z-index:40;
+    background:linear-gradient(rgba(255,255,255,.035) 50%,transparent 50%);background-size:100% 4px;mix-blend-mode:screen;opacity:.5}
+  .tut .tstage:after{content:"";position:absolute;inset:0;pointer-events:none;z-index:41;
+    background:radial-gradient(circle at 50% 50%,transparent 60%,rgba(0,0,0,.7));animation:tvign 6s ease-in-out infinite}
+  @keyframes tvign{0%,100%{opacity:.75}50%{opacity:.95}}
+  .tut .tshake{animation:tshake 5s infinite}
+  @keyframes tshake{0%,92%,100%{transform:translate(0,0)}93%{transform:translate(-2px,1px)}94%{transform:translate(2px,-1px)}95%{transform:translate(-1px,2px)}96%{transform:translate(1px,-2px)}}
+  .tslide{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:6vw;opacity:0;transition:opacity .9s ease;z-index:10}
+  .tslide.active{opacity:1;z-index:20}
+  .tslide>div{position:relative;padding:26px 30px;background:radial-gradient(ellipse at center,rgba(4,7,11,.72),rgba(4,7,11,.42) 70%,transparent)}
+  .tk{letter-spacing:8px;color:#ff3b57;font-size:13px;text-transform:uppercase;margin-bottom:22px;opacity:.85;text-shadow:0 0 12px rgba(255,60,90,.6)}
+  .tbig{font-size:clamp(30px,6.4vw,68px);font-weight:900;line-height:1.05;color:#eaf6ff;text-shadow:0 0 26px rgba(57,169,255,.55)}
+  .tbig .red{color:#ff3b57;text-shadow:0 0 26px rgba(255,60,90,.7)}
+  .tbig .grn{color:#4dffb5;text-shadow:0 0 26px rgba(77,255,181,.6)}
+  .tln{max-width:900px;font-size:clamp(16px,2.4vw,24px);line-height:1.7;color:#cdddeb}
+  .tmono{font-family:"Courier New",monospace;color:#4dffb5}
+  .ttype::after{content:"\2588";color:#4dffb5;animation:tblink 1s steps(1) infinite;margin-left:2px}
+  @keyframes tblink{50%{opacity:0}}
+  .tscreens{display:flex;gap:32px;margin-top:34px;flex-wrap:wrap;justify-content:center}
+  .tcard{width:260px;border:1px solid rgba(57,169,255,.4);background:rgba(8,16,24,.72);padding:18px;text-align:left;box-shadow:0 0 30px rgba(57,169,255,.12)}
+  .tcard h4{margin:0 0 10px;color:#39a9ff;letter-spacing:2px;font-size:14px;text-transform:uppercase}
+  .tcard p{margin:0;color:#a9c2d6;font-size:14px;line-height:1.6}
+  .tsteps{display:flex;flex-direction:column;gap:10px;margin-top:26px;max-width:640px;text-align:left}
+  .tstep{opacity:0;transform:translateX(-14px);border-left:3px solid #39a9ff;padding:8px 14px;color:#cfe4f4;font-size:16px;background:rgba(57,169,255,.08)}
+  .tstep.on{opacity:1;transform:translateX(0);transition:.5s}
+  .tstep b{color:#4dffb5}
+  .trooms{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:30px}
+  .tchip{border:1px solid rgba(77,255,181,.35);padding:9px 14px;color:#bff5df;font-size:14px;letter-spacing:1px;background:rgba(77,255,181,.08);opacity:0;transform:scale(.85)}
+  .tchip.on{opacity:1;transform:scale(1);transition:.45s}
+  .tarrow{color:#5c7488;align-self:center}
+  .tbtn{font-family:inherit;border:1px solid #4dffb5;background:rgba(77,255,181,.08);color:#e8f3ff;padding:15px 30px;letter-spacing:3px;text-transform:uppercase;font-weight:700;cursor:pointer;font-size:15px}
+  .tbtn:hover{background:#4dffb5;color:#02120c;box-shadow:0 0 26px rgba(77,255,181,.5)}
+  .tmute{position:fixed;bottom:22px;left:26px;z-index:210;border:1px solid #45586a;background:rgba(4,8,12,.7);color:#5c7488;padding:9px 16px;letter-spacing:2px;text-transform:uppercase;font-size:12px;cursor:pointer;font-family:inherit}
+  .tmute:hover{color:#e8f3ff;border-color:#39a9ff}
+  .tbar{position:fixed;left:0;bottom:0;height:3px;background:#39a9ff;width:0;z-index:210;box-shadow:0 0 12px rgba(57,169,255,.8);transition:width .3s linear}
+  .tdemo-wrap{width:min(920px,94vw);text-align:left}
+  .tdemo-title{text-align:center;margin-bottom:18px}
+  .tdemo-title .tbig{font-size:clamp(20px,3.6vw,34px)}
+  .tdemo-stage{position:relative;border:1px solid rgba(57,169,255,.3);background:rgba(6,12,18,.82);min-height:340px;overflow:hidden;box-shadow:0 0 40px rgba(0,0,0,.5)}
+  .tdemo-step{position:absolute;inset:0;opacity:0;transition:opacity .5s;padding:18px}
+  .tdemo-step.on{opacity:1}
+  .tdemo-label{position:absolute;top:12px;left:16px;font-size:12px;letter-spacing:3px;text-transform:uppercase;color:#4dffb5;z-index:5}
+  .tdemo-num{position:absolute;top:12px;right:16px;font-size:12px;letter-spacing:2px;color:#5c7488;z-index:5}
+  .tmock-scene{position:absolute;inset:38px 18px 18px;border:1px solid #22333f;background:linear-gradient(135deg,#0c1720,#0a121a);overflow:hidden}
+  .tmock-scene .troom{position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.02) 0 2px,transparent 2px 60px),repeating-linear-gradient(0deg,rgba(255,255,255,.02) 0 2px,transparent 2px 60px)}
+  .tmock-desk{position:absolute;left:20%;top:52%;width:44%;height:26%;background:#16242e;border:1px solid #2c4150;border-radius:3px}
+  .tmock-obj{position:absolute;left:31%;top:40%;width:11%;height:16%;border:2px solid transparent;background:rgba(57,169,255,.05)}
+  .tmock-obj.hot{border-color:#39a9ff;box-shadow:0 0 24px rgba(57,169,255,.8);background:rgba(57,169,255,.14)}
+  .tmock-obj .tlbl{position:absolute;left:50%;bottom:105%;transform:translateX(-50%);white-space:nowrap;color:#39a9ff;font-size:11px;letter-spacing:1px;opacity:0;transition:.3s}
+  .tmock-obj.hot .tlbl{opacity:1}
+  .tcursor{position:absolute;width:22px;height:22px;z-index:6;left:12%;top:78%;transition:left 1.6s cubic-bezier(.4,0,.2,1),top 1.6s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 0 4px rgba(0,0,0,.8))}
+  .tcursor.click{animation:tclk .25s}
+  @keyframes tclk{50%{transform:scale(.8)}}
+  .tmock-modal{position:absolute;left:50%;top:50%;transform:translate(-50%,-46%);width:min(560px,86%);border:1px solid rgba(57,169,255,.5);background:rgba(12,20,28,.96);padding:18px 20px;box-shadow:0 0 40px rgba(57,169,255,.2)}
+  .tmock-modal .tmtag{color:#4dffb5;font-size:11px;letter-spacing:3px;text-transform:uppercase}
+  .tmock-modal h4{margin:6px 0 12px;color:#eaf6ff;font-size:19px}
+  .tmock-modal .tmbadge{display:inline-block;border:1px solid rgba(57,169,255,.4);color:#9fd5ff;padding:2px 8px;font-size:11px;margin-bottom:10px;background:rgba(57,169,255,.08)}
+  .tmock-modal p{margin:0;color:#a9c2d6;font-size:14px;line-height:1.6}
+  .tterm{position:absolute;inset:38px 18px 18px;background:#050b10;border:1px solid #1d2e3a;padding:14px 16px;overflow:hidden;font-size:14px;line-height:1.55}
+  .tterm .ttbar{position:absolute;top:0;left:0;right:0;height:26px;background:#0c1720;border-bottom:1px solid #1d2e3a;display:flex;align-items:center;gap:6px;padding:0 10px}
+  .tterm .tdot{width:9px;height:9px;border-radius:50%;background:#33495a}
+  .tterm .tbody{margin-top:30px;white-space:pre-wrap;color:#bfe3ff}
+  .tterm .tprompt{color:#4dffb5}
+  .tterm .tok{color:#4dffb5}
+  .tterm .tcodehit{color:#ffd166;font-weight:700;text-shadow:0 0 12px rgba(255,209,102,.6)}
+  .tentry{position:absolute;inset:38px 18px 18px;display:grid;place-items:center;text-align:center}
+  .tentry .tcap{color:#5c7488;letter-spacing:2px;font-size:12px;text-transform:uppercase;margin-bottom:14px}
+  .tentry .tfield{width:min(420px,86%);border:1px solid rgba(57,169,255,.5);background:rgba(5,11,16,.9);padding:14px 16px;color:#eaf6ff;font-family:inherit;font-size:18px;letter-spacing:2px;text-align:center}
+  .tentry .tfield.good{border-color:#4dffb5;color:#4dffb5;box-shadow:0 0 24px rgba(77,255,181,.35)}
+  .tentry .tunlocked{margin-top:16px;color:#4dffb5;letter-spacing:3px;font-weight:700;opacity:0;transition:.4s;text-transform:uppercase}
+  .tentry .tunlocked.on{opacity:1}
   </style>
+
 </head>
 <body>
   <section id="intro" class="screen active intro">
@@ -604,7 +687,11 @@
         facility component &mdash; and a Kubernetes component."</div>
       <div class="meta"><span class="pill">&#9201; 20-minute limit</span><span class="pill">&#128100; Solo Player</span><span
           class="pill">&#127919; 5 Scenarios</span><span class="pill">&#128193; Offline HTML</span></div>
-      <button class="btn" onclick="startGame()">Enter Facility</button>
+            <div style="display:flex;gap:16px;justify-content:flex-start;flex-wrap:wrap;margin-top:6px">
+        <button class="btn" id="watchTutBtn" onclick="watchTutorial()">&#9658; Watch Tutorial</button>
+        <button class="btn" id="enterBtn" onclick="startGame()">Enter the Facility</button>
+      </div>
+      <div id="tutHint" style="margin-top:14px;color:var(--dim);letter-spacing:2px;font-size:12px;text-transform:uppercase">Watch the briefing to unlock entry</div>
     </div>
   </section>
   <section id="game" class="screen">
@@ -813,6 +900,18 @@
     let audioCtx = null, masterGain = null, ambientNodes = [], audioEnabled = true;
     const $ = id => document.getElementById(id);
     function startGame() {
+      if (localStorage.getItem('k8sTutorialWatched') !== 'yes') {
+        const hint = document.getElementById('tutHint');
+        if (hint) {
+          hint.style.color = 'var(--red)';
+          hint.textContent = 'Watch the briefing first to unlock entry';
+          setTimeout(() => {
+            hint.style.color = 'var(--dim)';
+            hint.textContent = 'Watch the briefing to unlock entry';
+          }, 1800);
+        }
+        return; // block entry until tutorial is watched
+      }
       $("intro").classList.remove("active");
       $("intro").style.display = "none";
       $("game").style.display = "block";
@@ -1117,6 +1216,232 @@
         playFx('hint');
       }
     }
+  /* ================= TUTORIAL GATING ================= */
+  (function(){
+    const watched = localStorage.getItem('k8sTutorialWatched') === 'yes';
+    window.addEventListener('DOMContentLoaded', ()=>{
+      const enter = document.getElementById('enterBtn');
+      const hint = document.getElementById('tutHint');
+      if(watched){
+        if(enter) enter.classList.remove('locked');
+        if(hint) hint.style.display='none';
+      } else {
+        if(enter) enter.classList.add('locked');
+        if(hint) hint.style.display='block';
+      }
+    });
+  })();
+
+  function watchTutorial(){
+    document.getElementById('tut').classList.add('open');
+    tInitAudio();               // click on button unlocks audio
+    document.getElementById('tmuteBtn').classList.remove('hidden');
+    document.getElementById('tstage').classList.add('live');
+    tShow(0);
+  }
+
+  function finishTutorial(){
+    localStorage.setItem('k8sTutorialWatched','yes');
+    tClearTimers();
+    if(tHeart) clearInterval(tHeart);
+    if(tMaster) tMaster.gain.setTargetAtTime(0, tAC.currentTime, 0.4);
+    const tut=document.getElementById('tut');
+    const st=document.getElementById('tstage');
+    st.style.transition='opacity .8s'; st.style.opacity='0';
+    setTimeout(()=>{
+      tut.classList.remove('open');
+      st.style.opacity=''; st.classList.remove('live');
+      const enter=document.getElementById('enterBtn');
+      const hint=document.getElementById('tutHint');
+      if(enter) enter.classList.remove('locked');
+      if(hint) hint.style.display='none';
+    },850);
+  }
+
+  /* ---- tutorial audio ---- */
+  let tAC=null, tMaster=null, tMuted=false, tDrone=[], tHeart=null;
+  function tInitAudio(){
+    if(tAC) { if(tAC.state==='suspended') tAC.resume(); return; }
+    tAC=new (window.AudioContext||window.webkitAudioContext)();
+    tMaster=tAC.createGain(); tMaster.gain.value=0.9; tMaster.connect(tAC.destination);
+    const g=tAC.createGain(); g.gain.value=0; g.connect(tMaster); g.gain.setTargetAtTime(0.10,tAC.currentTime,3.0);
+    [42,42.7,63].forEach((f,i)=>{const o=tAC.createOscillator();o.type=i===2?'triangle':'sine';o.frequency.value=f;
+      const og=tAC.createGain();og.gain.value=i===2?0.35:1;o.connect(og);og.connect(g);o.start();tDrone.push(o);});
+    const lfo=tAC.createOscillator();lfo.frequency.value=0.08;const lg=tAC.createGain();lg.gain.value=0.04;lfo.connect(lg);lg.connect(g.gain);lfo.start();tDrone.push(lfo);
+    function thump(t,vol){const o=tAC.createOscillator(),gg=tAC.createGain();o.type='sine';o.frequency.setValueAtTime(70,t);o.frequency.exponentialRampToValueAtTime(40,t+0.16);gg.gain.setValueAtTime(0.0001,t);gg.gain.exponentialRampToValueAtTime(vol,t+0.02);gg.gain.exponentialRampToValueAtTime(0.0001,t+0.22);o.connect(gg);gg.connect(tMaster);o.start(t);o.stop(t+0.3);}
+    function beat(){if(!tAC)return;const t=tAC.currentTime;thump(t,0.28);thump(t+0.28,0.18);}
+    beat(); tHeart=setInterval(beat,1600);
+  }
+  function tFx(type){
+    if(!tAC||tMuted)return; const now=tAC.currentTime;
+    const tone=(w,fr,du,vo)=>{const o=tAC.createOscillator(),g=tAC.createGain();o.type=w;o.frequency.value=fr;g.gain.setValueAtTime(0.0001,now);g.gain.exponentialRampToValueAtTime(vo,now+0.01);g.gain.exponentialRampToValueAtTime(0.0001,now+du);o.connect(g);g.connect(tMaster);o.start(now);o.stop(now+du+0.02);};
+    if(type==='beep') tone('square',760,0.05,0.05);
+    if(type==='key') tone('square',420+Math.random()*120,0.03,0.03);
+    if(type==='impact'){const o=tAC.createOscillator(),g=tAC.createGain();o.type='sine';o.frequency.setValueAtTime(120,now);o.frequency.exponentialRampToValueAtTime(38,now+0.5);g.gain.setValueAtTime(0.0001,now);g.gain.exponentialRampToValueAtTime(0.5,now+0.02);g.gain.exponentialRampToValueAtTime(0.0001,now+0.6);o.connect(g);g.connect(tMaster);o.start(now);o.stop(now+0.7);}
+    if(type==='glitch'){const b=tAC.createBuffer(1,tAC.sampleRate*0.18,tAC.sampleRate);const d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2);const s=tAC.createBufferSource();s.buffer=b;const g=tAC.createGain();g.gain.value=0.18;const hp=tAC.createBiquadFilter();hp.type='highpass';hp.frequency.value=1200;s.connect(hp);hp.connect(g);g.connect(tMaster);s.start();}
+    if(type==='success'){tone('sine',660,0.14,0.06);const o=tAC.createOscillator(),g=tAC.createGain();o.type='sine';o.frequency.value=990;g.gain.setValueAtTime(0.0001,now+0.08);g.gain.exponentialRampToValueAtTime(0.05,now+0.09);g.gain.exponentialRampToValueAtTime(0.0001,now+0.28);o.connect(g);g.connect(tMaster);o.start(now+0.08);o.stop(now+0.3);}
+    if(type==='tension'){const o=tAC.createOscillator(),g=tAC.createGain();o.type='sawtooth';o.frequency.setValueAtTime(80,now);o.frequency.exponentialRampToValueAtTime(520,now+4.5);g.gain.setValueAtTime(0.0001,now);g.gain.exponentialRampToValueAtTime(0.08,now+0.5);g.gain.exponentialRampToValueAtTime(0.12,now+4.0);g.gain.exponentialRampToValueAtTime(0.0001,now+5.2);const lp=tAC.createBiquadFilter();lp.type='lowpass';lp.frequency.value=900;o.connect(lp);lp.connect(g);g.connect(tMaster);o.start(now);o.stop(now+5.4);}
+  }
+  function tToggleMute(){tMuted=!tMuted;if(tMaster)tMaster.gain.setTargetAtTime(tMuted?0:0.9,tAC.currentTime,0.15);document.getElementById('tmuteBtn').innerHTML=tMuted?'&#128263; Sound Off':'&#128266; Sound On';}
+
+  /* ---- tutorial sequence ---- */
+  const tSlides=()=>[...document.querySelectorAll('#tstage .tslide')];
+  let tIdx=-1, tTimer=null, tDemoTimers=[];
+  const TDEMO=5;
+  function tClearTimers(){clearTimeout(tTimer);tDemoTimers.forEach(t=>clearTimeout(t));tDemoTimers=[];}
+  function tD(fn,ms){tDemoTimers.push(setTimeout(fn,ms));}
+  function tTypeInto(el,text,speed,cb){el.textContent='';let i=0;const t=setInterval(()=>{el.textContent=text.slice(0,++i);if(i%2===0)tFx('key');if(i>=text.length){clearInterval(t);if(cb)cb();}},speed);}
+  function tTypeBoot(){const el=document.getElementById('tboot');if(!el)return;const full='BOOTING FACILITY CORE';el.textContent='';let i=0;const t=setInterval(()=>{el.textContent=full.slice(0,++i);if(i%2===0)tFx('beep');if(i>=full.length)clearInterval(t);},95);}
+  function tDemoStep(id){['tdA','tdB','tdC','tdD','tdE'].forEach(x=>document.getElementById(x).classList.remove('on'));document.getElementById(id).classList.add('on');}
+  function tRunDemo(){
+    tDemoTimers.forEach(t=>clearTimeout(t));tDemoTimers=[];
+    const obj=document.getElementById('tmockObj'),cur=document.getElementById('tcursor');
+    obj.classList.remove('hot');document.getElementById('ttermFix').innerHTML='';document.getElementById('ttermCode').innerHTML='';
+    const field=document.getElementById('tmockField');field.textContent='\u00a0';field.classList.remove('good');document.getElementById('tmockUnlocked').classList.remove('on');
+    tDemoStep('tdA');
+    tD(()=>{cur.style.left='34%';cur.style.top='44%';},700);
+    tD(()=>{obj.classList.add('hot');tFx('beep');},2500);
+    tD(()=>{cur.classList.add('click');tFx('impact');},3200);
+    tD(()=>{cur.classList.remove('click');},3500);
+    tD(()=>{tDemoStep('tdB');tFx('glitch');},6500);
+    tD(()=>{tDemoStep('tdC');const el=document.getElementById('ttermFix');el.innerHTML='<span class="tprompt">$ </span>';const cmd='kubectl -n reception patch svc reception-desk \\\n   -p \'{"spec":{"selector":{"app":"reception"}}}\'';const sp=document.createElement('span');el.appendChild(sp);tTypeInto(sp,cmd,30,()=>{tD(()=>{el.innerHTML+='\n<span class="tok">service/reception-desk patched</span>';tFx('success');},600);});},12000);
+    tD(()=>{tDemoStep('tdD');const el=document.getElementById('ttermCode');el.innerHTML='<span class="tprompt">$ </span>';const cmd='kubectl -n reception exec visitor -- curl -s reception-desk';const sp=document.createElement('span');el.appendChild(sp);tTypeInto(sp,cmd,26,()=>{tD(()=>{el.innerHTML+='\n\nRECEPTION DESK :: ROUTE RESTORED\nvisitor connection accepted\n>>> CODE: <span class="tcodehit">DEMO-CODE-42</span> <<<';tFx('beep');},600);});},19500);
+    tD(()=>{tDemoStep('tdE');const field=document.getElementById('tmockField');tD(()=>{tTypeInto(field,'DEMO-CODE-42',95,()=>{tD(()=>{field.classList.add('good');tFx('success');document.getElementById('tmockUnlocked').classList.add('on');},400);});},1000);},27000);
+  }
+  function tAnimate(n){
+    if(n===0) setTimeout(tTypeBoot,300);
+    if(n===4){const st=document.querySelectorAll('#tsteps .tstep');st.forEach((s,i)=>{s.classList.remove('on');setTimeout(()=>{s.classList.add('on');tFx('beep');},350+i*700);});}
+    if(n===TDEMO){tRunDemo();}
+    if(n===6){const ch=document.querySelectorAll('#trooms .tchip');ch.forEach((c,i)=>{c.classList.remove('on');setTimeout(()=>{c.classList.add('on');tFx('beep');},300+i*550);});}
+    if(n===7){tFx('tension');}
+  }
+  function tShow(n){
+    const S=tSlides();
+    if(n>=S.length){finishTutorial();return;}
+    if(tIdx>=0)S[tIdx].classList.remove('active');
+    if(tIdx===TDEMO){tDemoTimers.forEach(t=>clearTimeout(t));tDemoTimers=[];}
+    tIdx=n;const s=S[tIdx];s.classList.add('active');tFx('impact');
+    if(tIdx===1||tIdx===2)setTimeout(()=>tFx('glitch'),450);
+    tAnimate(tIdx);
+    const dur=parseInt(s.dataset.dur||'5000',10);
+    const bar=document.getElementById('tbar');
+    bar.style.transition='none';bar.style.width='0';void bar.offsetWidth;
+    bar.style.transition='width '+dur+'ms linear';bar.style.width='100%';
+    clearTimeout(tTimer);
+    if(tIdx<S.length-1) tTimer=setTimeout(()=>tShow(tIdx+1),dur);
+  }
   </script>
+<div class="tut" id="tut">
+  <div class="tstage tshake" id="tstage">
+    <div class="tbg"></div>
+
+    <section class="tslide" data-dur="3600">
+      <div><div class="tk">// SIGNAL LOST</div>
+        <div class="tbig"><span class="tmono ttype" id="tboot">booting facility core</span></div></div>
+    </section>
+
+    <section class="tslide" data-dur="4600">
+      <div><div class="tk">Containment Level 5</div>
+        <div class="tbig">You wake inside<br>the <span class="red">Kubernetes Facility</span></div>
+        <div class="tln" style="margin-top:24px">The lights are dead. The exit is sealed.<br>Something in the cluster has failed.</div></div>
+    </section>
+
+    <section class="tslide" data-dur="5200">
+      <div><div class="tk">Intercom // Origin Unknown</div>
+        <div class="tln" style="max-width:820px;font-size:clamp(18px,2.7vw,27px);color:#dbe9f6">
+        &ldquo;Five systems have failed. Five doors are locked.<br><br>
+        Repair each one&hellip; or remain here<br>with the rest of us&hellip; <span class="red">forever.</span>&rdquo;</div></div>
+    </section>
+
+    <section class="tslide" data-dur="6200">
+      <div><div class="tk">Your Tools</div>
+        <div class="tbig" style="font-size:clamp(24px,4.4vw,44px)">Two screens keep you alive</div>
+        <div class="tscreens">
+          <div class="tcard"><h4>&#128421; Browser Game</h4><p>The facility map. Find hidden objects, read each failure, and enter the CODE WORD to open the next door.</p></div>
+          <div class="tcard"><h4>&#128187; Killercoda Terminal</h4><p>A live cluster. This is where you actually repair the broken system with your own commands.</p></div>
+        </div></div>
+    </section>
+
+    <section class="tslide" data-dur="7000">
+      <div><div class="tk">The Ritual // Repeat Or Perish</div>
+        <div class="tbig" style="font-size:clamp(24px,4.4vw,44px)">Every room, the same rite</div>
+        <div class="tsteps" id="tsteps">
+          <div class="tstep">&#128269; <b>Find</b> the hidden object in the scene</div>
+          <div class="tstep">&#128220; <b>Read</b> the failure and its Kubernetes clue</div>
+          <div class="tstep">&#128736; <b>Repair</b> the broken resource in the terminal</div>
+          <div class="tstep">&#128273; <b>Recover</b> the CODE WORD it leaves behind</div>
+          <div class="tstep">&#128682; <b>Unlock</b> the next door and move deeper</div>
+        </div></div>
+    </section>
+
+    <section class="tslide" data-dur="34000" id="tdemoSlide">
+      <div class="tdemo-wrap">
+        <div class="tdemo-title">
+          <div class="tk" style="color:#4dffb5">Live Demonstration // Sample Room</div>
+          <div class="tbig">Watch one room, start to finish</div>
+        </div>
+        <div class="tdemo-stage">
+          <div class="tdemo-step" id="tdA">
+            <div class="tdemo-label">&#128269; Step 1 &mdash; Find the object</div>
+            <div class="tdemo-num">Reception Desk</div>
+            <div class="tmock-scene"><div class="troom"></div><div class="tmock-desk"></div>
+              <div class="tmock-obj" id="tmockObj"><span class="tlbl">Investigate</span></div>
+              <div class="tcursor" id="tcursor"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M4 2l6 16 2.5-6.5L19 9z" fill="#eaf6ff" stroke="#04060a" stroke-width="1"/></svg></div>
+            </div>
+          </div>
+          <div class="tdemo-step" id="tdB">
+            <div class="tdemo-label">&#128220; Step 2 &mdash; Read the failure</div>
+            <div class="tdemo-num">Kubernetes Context</div>
+            <div class="tmock-modal"><div class="tmtag">Object Found: Service</div>
+              <h4>Reception Terminal</h4><span class="tmbadge">v1/Service</span>
+              <p>The visitor routing system has failed. The pods are healthy, but the Service selector points to the wrong label &mdash; so traffic reaches no one. Fix the Service to restore the route.</p></div>
+          </div>
+          <div class="tdemo-step" id="tdC">
+            <div class="tdemo-label">&#128187; Step 3 &mdash; Repair in Killercoda</div>
+            <div class="tdemo-num">Terminal</div>
+            <div class="tterm"><div class="ttbar"><span class="tdot"></span><span class="tdot"></span><span class="tdot"></span></div>
+              <div class="tbody" id="ttermFix"></div></div>
+          </div>
+          <div class="tdemo-step" id="tdD">
+            <div class="tdemo-label">&#128273; Step 4 &mdash; Capture the CODE WORD</div>
+            <div class="tdemo-num">Terminal Output</div>
+            <div class="tterm"><div class="ttbar"><span class="tdot"></span><span class="tdot"></span><span class="tdot"></span></div>
+              <div class="tbody" id="ttermCode"></div></div>
+          </div>
+          <div class="tdemo-step" id="tdE">
+            <div class="tdemo-label">&#9000;&#65039; Step 5 &mdash; Enter it in the game</div>
+            <div class="tdemo-num">Browser Game</div>
+            <div class="tentry"><div><div class="tcap">Enter Unlock Code</div>
+              <div class="tfield" id="tmockField">&nbsp;</div>
+              <div class="tunlocked" id="tmockUnlocked">&#128682; Door Unlocked</div></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="tslide" data-dur="6200">
+      <div><div class="tk">Five Failures</div>
+        <div class="tbig" style="font-size:clamp(24px,4.4vw,44px)">Descend through the dark</div>
+        <div class="trooms" id="trooms">
+          <span class="tchip">SERVICE</span><span class="tarrow">&#10132;</span>
+          <span class="tchip">CONFIGMAP</span><span class="tarrow">&#10132;</span>
+          <span class="tchip">PVC</span><span class="tarrow">&#10132;</span>
+          <span class="tchip">SECRET</span><span class="tarrow">&#10132;</span>
+          <span class="tchip">NETWORKPOLICY</span>
+        </div>
+        <div class="tln" style="margin-top:26px">Connectivity. Configuration. Storage.<br>Authentication. And the final gate.</div></div>
+    </section>
+
+    <section class="tslide" data-dur="9000">
+      <div><div class="tk" style="color:#4dffb5">Final Transmission</div>
+        <div class="tbig">20 minutes.<br>One way out.<br><span class="grn">Fix everything.</span></div>
+        <div class="tln" style="margin-top:22px">The clock starts the moment you enter.<br>Do not stop. Do not look back.</div>
+        <div style="margin-top:40px"><button class="tbtn" onclick="finishTutorial()">&#10094; Return to Main Menu</button></div></div>
+    </section>
+
+  </div>
+  <button class="tmute" id="tmuteBtn" onclick="tToggleMute()">&#128266; Sound On</button>
+  <div class="tbar" id="tbar"></div>
+</div>
 </body>
 </html>
