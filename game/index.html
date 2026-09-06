@@ -552,29 +552,279 @@
       display: grid !important
     }
     .win-card {
-      max-width: 760px;
-      border: 1px solid rgba(77, 255, 181, .45);
-      background: rgba(12, 20, 28, .60);
-      padding: 30px
+      width: 100%;
+      display: flex;
+      justify-content: center;
     }
-    .win h1 {
-      color: var(--green);
-      font-size: 42px
+
+    /* ===== WINDOW RESULTS CARD (scoped, does not affect anything outside .window) ===== */
+    .window {
+      /* local tokens, prefixed so they can never collide with the :root theme above */
+      --win-bg-void: #0b0e12;
+      --win-panel: #12161c;
+      --win-panel-raised: #181d25;
+      --win-line: #2a323d;
+      --win-line-soft: #1f2630;
+      --win-text: #dbe2ea;
+      --win-muted: #7c8896;
+      --win-accent: #4f9dff;
+      --win-accent-dim: #2c5c96;
+      --win-amber: #e0a458;
+      --win-mono: "IBM Plex Mono", "SFMono-Regular", Consolas, monospace;
+      --win-sans: "IBM Plex Sans", "Segoe UI", Arial, sans-serif;
+
+      width: 100%;
+      max-width: 880px;
+      text-align: left;
+      font-family: var(--win-sans);
+      color: var(--win-text);
+      background: var(--win-panel);
+      border: 1px solid var(--win-line);
+      box-shadow: 0 30px 60px -25px rgba(0, 0, 0, .7);
+      overflow: hidden;
     }
-    .summary {
+    .window h1 {
+      font-size: inherit;
+      color: inherit;
+    }
+
+    .window .titlebar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: var(--win-panel-raised);
+      border-bottom: 1px solid var(--win-line);
+    }
+    .window .titlebar-left {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+    .window .titlebar-icon {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: var(--win-bg-void);
+      background: var(--win-accent);
+    }
+    .window .titlebar-title {
+      font-family: var(--win-mono);
+      font-size: 13px;
+      letter-spacing: .02em;
+      color: var(--win-text);
+    }
+    .window .titlebar-close {
+      width: 22px;
+      height: 22px;
+      border: 1px solid var(--win-line);
+      background: transparent;
+      color: var(--win-muted);
+      font-size: 11px;
+      cursor: pointer;
+      line-height: 1;
+      text-transform: none;
+      letter-spacing: normal;
+      font-weight: 400;
+    }
+    .window .titlebar-close:hover {
+      background: #4a2020;
+      border-color: #7a3030;
+      color: #f0b4b4;
+    }
+
+    .window .subheader {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 14px;
+      background: #0e1116;
+      border-bottom: 1px solid var(--win-line-soft);
+    }
+    .window .tab-strip {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .window .tab-key {
+      font-family: var(--win-mono);
+      font-size: 10px;
+      color: var(--win-muted);
+      border: 1px solid var(--win-line);
+      padding: 2px 6px;
+      background: var(--win-panel-raised);
+    }
+    .window .tab-active {
+      font-family: var(--win-mono);
+      font-size: 11px;
+      color: var(--win-bg-void);
+      background: var(--win-accent);
+      padding: 3px 10px;
+      font-weight: 600;
+    }
+    .window .subheader {
+      font-family: var(--win-mono);
+      font-size: 10.5px;
+      letter-spacing: .08em;
+      color: var(--win-accent-dim);
+      text-transform: none;
+    }
+
+    .window .split {
+      display: grid;
+      grid-template-columns: .85fr 1.15fr;
+    }
+    .window .col-left {
+      padding: 26px 24px;
+      border-right: 1px solid var(--win-line);
+      background: #0e1116;
+    }
+    .window .col-right {
+      padding: 26px 26px 22px;
+    }
+
+    .window .kicker {
+      margin: 0 0 2px;
+      font-size: 12px;
+      color: var(--win-muted);
+    }
+    .window .col-left h1 {
+      margin: 0 0 18px;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--win-text);
+    }
+
+    .window .rows {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .window .row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--win-line-soft);
+    }
+    .window .row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .window .row-label {
+      font-size: 12.5px;
+      color: var(--win-muted);
+      line-height: 1.4;
+    }
+    .window .pill {
+      align-self: flex-start;
+      font-family: var(--win-mono);
+      font-size: 12px;
+      color: var(--win-text);
+      background: var(--win-panel-raised);
+      border: 1px solid var(--win-line);
+      padding: 3px 9px;
+    }
+    .window .pill.model {
+      color: var(--win-amber);
+      border-color: #4a3a24;
+    }
+
+    .window .status-line {
+      margin: 0 0 8px;
+      font-family: var(--win-mono);
+      font-size: 11px;
+      letter-spacing: .09em;
+      color: var(--win-accent);
+    }
+    .window .summary-title {
+      margin: 0 0 12px;
+      font-size: 25px;
+      line-height: 1.25;
+      font-weight: 600;
+      color: var(--win-text);
+    }
+    .window .summary-desc {
+      margin: 0 0 20px;
+      font-size: 13.5px;
+      line-height: 1.65;
+      color: var(--win-muted);
+      max-width: 60ch;
+    }
+
+    .window .map-table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 18px;
-      text-align: left
+      margin-bottom: 22px;
+      font-size: 12.5px;
     }
-    .summary th,
-    .summary td {
-      border-bottom: 1px solid rgba(255, 255, 255, .1);
-      padding: 10px;
-      color: var(--muted)
+    .window .map-table thead th {
+      text-align: left;
+      font-family: var(--win-mono);
+      font-size: 10.5px;
+      color: var(--win-muted);
+      font-weight: 500;
+      padding: 0 10px 8px 0;
+      border-bottom: 1px solid var(--win-line);
     }
-    .summary th {
-      color: var(--blue)
+    .window .map-table tbody td {
+      padding: 9px 10px 9px 0;
+      border-bottom: 1px solid var(--win-line-soft);
+      color: var(--win-text);
+      vertical-align: top;
+    }
+    .window .map-table tbody td:nth-child(2) {
+      color: var(--win-accent);
+      font-family: var(--win-mono);
+      white-space: nowrap;
+    }
+    .window .map-table tbody td:nth-child(3) {
+      color: var(--win-muted);
+    }
+    .window .map-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .window .play-again {
+      font-family: var(--win-mono);
+      font-size: 13px;
+      color: var(--win-bg-void);
+      background: var(--win-accent);
+      border: none;
+      padding: 11px 20px;
+      cursor: pointer;
+      letter-spacing: .02em;
+      text-transform: none;
+      font-weight: 400;
+    }
+    .window .play-again:hover {
+      background: #6bafff;
+    }
+
+    .window .footer {
+      padding: 12px 14px;
+      background: #0e1116;
+      border-top: 1px solid var(--win-line-soft);
+      font-size: 11.5px;
+      color: var(--win-muted);
+      text-align: center;
+    }
+    .window .footer strong {
+      color: var(--win-text);
+      font-weight: 600;
+    }
+
+    @media (max-width: 640px) {
+      .window .split {
+        grid-template-columns: 1fr;
+      }
+      .window .col-left {
+        border-right: none;
+        border-bottom: 1px solid var(--win-line);
+      }
     }
     @media(max-width:720px) {
       .hud {
@@ -685,22 +935,20 @@
       <div class="subtitle">The Locked Facility</div>
       <div class="intercom">"The exit door is locked. Five critical systems have failed throughout the facility. To
         escape, restore each system and recover the hidden objects that unlock the next area. Every object represents a
-        facility component &mdash; and a Kubernetes component."</div>
-      <div class="meta"><span class="pill">&#9201; 20-minute limit</span><span class="pill">&#128100; Solo Player</span><span
-          class="pill">&#127919; 5 Scenarios</span><span class="pill">&#128193; Offline HTML</span></div>
+        facility component — and a Kubernetes component."</div>
+      <div class="meta"><span class="pill">⏱ 20-minute limit</span><span class="pill">👤 Solo Player</span><span class="pill">🎯 5 Scenarios</span><span class="pill">📁 Offline HTML</span></div>
             <div style="display:flex;gap:16px;justify-content:flex-start;flex-wrap:wrap;margin-top:6px">
-        <button class="btn" id="watchTutBtn" onclick="watchTutorial()">&#9658; Watch Tutorial</button>
+        <button class="btn" id="watchTutBtn" onclick="watchTutorial()">► Watch Tutorial</button>
         <button class="btn" id="enterBtn" onclick="startGame()">Enter the Facility</button>
       </div>
-      <div id="tutHint" style="margin-top:14px;color:var(--dim);letter-spacing:2px;font-size:12px;text-transform:uppercase">Watch the briefing to unlock entry</div>
+      <div id="tutHint" style="margin-top: 14px; color: var(--dim); letter-spacing: 2px; font-size: 12px; text-transform: uppercase; display: none;">Watch the briefing to unlock entry</div>
     </div>
   </section>
   <section id="game" class="screen">
     <div class="hud">
       <div><small>Scenario</small><b id="scenario-count">1 / 5</b></div>
       <div style="text-align:center">
-        <div class="timer" id="timer">20:00</div><button id="audio-toggle" class="btn secondary"
-          style="font-size:11px;padding:6px 10px;margin-top:4px" onclick="toggleAudio()">Audio On</button>
+        <div class="timer" id="timer">20:00</div><button id="audio-toggle" class="btn secondary" style="font-size:11px;padding:6px 10px;margin-top:4px" onclick="toggleAudio()">Audio On</button>
       </div>
       <div><small style="text-align:right">Inventory</small>
         <div class="inventory" id="inventory"></div>
@@ -728,7 +976,7 @@
         <div>
           <div class="tag" id="modal-tag">Object Found</div>
           <h2 id="modal-title"></h2>
-        </div><button class="x" onclick="closeModal()">&times;</button>
+        </div><button class="x" onclick="closeModal()">×</button>
       </div>
       <div class="section">
         <h3>Escape Room Story</h3>
@@ -743,7 +991,7 @@
         <div class="problems" id="problems"></div>
       </div>
       <div class="challenge">
-        <h3>&#9889; Enter Unlock Code</h3>
+        <h3>⚡ Enter Unlock Code</h3>
         <p id="instruction" style="color:var(--muted);line-height:1.6"></p>
         <div class="code" id="code"></div>
         <input type="text" id="unlock-code" class="unlock-input" placeholder="TYPE UNLOCK CODE HERE" autocomplete="off" spellcheck="false">
@@ -754,44 +1002,73 @@
     </div>
   </div>
   <section id="win" class="screen win">
-    <div class="win-card">
-      <div class="eyebrow">All Systems Restored</div>
-      <h1>You Escaped the Kubernetes Facility</h1>
-      <p style="color:var(--muted);line-height:1.6">The final exit door is unlocked. The cluster has been restored
-        through Service, ConfigMap, PVC, Secret, and NetworkPolicy troubleshooting.</p>
-      <table class="summary">
-        <tr>
-          <th>Object</th>
-          <th>K8s Resource</th>
-          <th>Concept</th>
-        </tr>
-        <tr>
-          <td>Reception Access Card</td>
-          <td>Service</td>
-          <td>Traffic routing with selectors</td>
-        </tr>
-        <tr>
-          <td>Facility Blueprint</td>
-          <td>ConfigMap</td>
-          <td>Application configuration</td>
-        </tr>
-        <tr>
-          <td>Storage Expansion Plan</td>
-          <td>PVC</td>
-          <td>Persistent storage capacity</td>
-        </tr>
-        <tr>
-          <td>Level 5 Security Badge</td>
-          <td>Secret</td>
-          <td>Sensitive credentials</td>
-        </tr>
-        <tr>
-          <td>Security Gate Door</td>
-          <td>NetworkPolicy</td>
-          <td>Pod communication control</td>
-        </tr>
-      </table><br><button class="btn" onclick="location.reload()">Play Again</button>
+  <div class="win-card">
+  <div class="window">
+    <div class="titlebar">
+      <div class="titlebar-left">
+        <div class="titlebar-icon">▲</div>
+        <div class="titlebar-title">Results</div>
+      </div>
     </div>
+    <div class="subheader">
+      <div class="tab-strip">
+        <span class="tab-key">L1</span>
+        <span class="tab-active">Game</span>
+        <span class="tab-key">R1</span>
+      </div>
+      <span class="eyebrow">K8S ESCAPE COMPLEX</span>
+    </div>
+    <div class="split">
+      <div class="col-left">
+        <p class="kicker">Development team</p>
+        <h1>Credits</h1>
+        <div class="rows">
+          <div class="row">
+            <span class="row-label">Proof of Concept</span>
+            <span class="pill">Alvin J.</span>
+          </div>
+          <div class="row">
+            <span class="row-label">Game Architecture and Full Stack Lead</span>
+            <span class="pill">Ralph P.</span>
+          </div>
+          <div class="row">
+            <span class="row-label">Game Design &amp; Full Stack Support</span>
+            <span class="pill">Rachel L.</span>
+          </div>
+          <div class="row">
+            <span class="row-label">Development Powered by AI</span>
+            <span class="pill model">GPT Models</span>
+          </div>
+          <div class="row">
+            <span class="row-label">Special Thanks</span>
+            <span class="pill">AF — Coding Consultant</span>
+          </div>
+        </div>
+      </div>
+      <div class="col-right">
+        <p class="eyebrow">ALL SYSTEMS RESTORED</p>
+        <h1 class="summary-title">You Escaped the Kubernetes Facility</h1>
+        <p class="summary-desc">The final exit door is unlocked. The cluster has been restored through Service, ConfigMap, PVC, Secret, and NetworkPolicy troubleshooting.</p>
+        <table class="map-table">
+          <thead>
+            <tr><th>Object</th><th>K8s resource</th><th>Concept</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Reception Access Card</td><td>Service</td><td>Traffic routing with selectors</td></tr>
+            <tr><td>Facility Blueprint</td><td>ConfigMap</td><td>Application configuration</td></tr>
+            <tr><td>Storage Expansion Plan</td><td>PVC</td><td>Persistent storage capacity</td></tr>
+            <tr><td>Level 5 Security Badge</td><td>Secret</td><td>Sensitive credentials</td></tr>
+            <tr><td>Security Gate Door</td><td>NetworkPolicy</td><td>Pod communication control</td></tr>
+          </tbody>
+        </table>
+        <button class="btn" onclick="location.reload()">PLAY AGAIN</button>
+      </div>
+    </div>
+    <div class="footer">
+      <span>Developed for <strong>Cloud Migration Factory (CMF)</strong></span>
+    </div>
+  </div>
+  </div>
   </section>
   <script>
     const scenarios = [
@@ -1350,16 +1627,16 @@
     <section class="tslide" data-dur="5200">
       <div><div class="tk">Intercom // Origin Unknown</div>
         <div class="tln" style="max-width:820px;font-size:clamp(18px,2.7vw,27px);color:#dbe9f6">
-        &ldquo;Five systems have failed. Five doors are locked.<br><br>
-        Repair each one&hellip; or remain here<br>with the rest of us&hellip; <span class="red">forever.</span>&rdquo;</div></div>
+        “Five systems have failed. Five doors are locked.<br><br>
+        Repair each one… or remain here<br>with the rest of us… <span class="red">forever.</span>”</div></div>
     </section>
 
     <section class="tslide" data-dur="6200">
       <div><div class="tk">Your Tools</div>
         <div class="tbig" style="font-size:clamp(24px,4.4vw,44px)">Two screens keep you alive</div>
         <div class="tscreens">
-          <div class="tcard"><h4>&#128421; Browser Game</h4><p>The facility map. Find hidden objects, read each failure, and enter the CODE WORD to open the next door.</p></div>
-          <div class="tcard"><h4>&#128187; Killercoda Terminal</h4><p>A live cluster. This is where you actually repair the broken system with your own commands.</p></div>
+          <div class="tcard"><h4>🖥 Browser Game</h4><p>The facility map. Find hidden objects, read each failure, and enter the CODE WORD to open the next door.</p></div>
+          <div class="tcard"><h4>💻 Killercoda Terminal</h4><p>A live cluster. This is where you actually repair the broken system with your own commands.</p></div>
         </div></div>
     </section>
 
@@ -1367,11 +1644,11 @@
       <div><div class="tk">The Ritual // Repeat Or Perish</div>
         <div class="tbig" style="font-size:clamp(24px,4.4vw,44px)">Every room, the same rite</div>
         <div class="tsteps" id="tsteps">
-          <div class="tstep">&#128269; <b>Find</b> the hidden object in the scene</div>
-          <div class="tstep">&#128220; <b>Read</b> the failure and its Kubernetes clue</div>
-          <div class="tstep">&#128736; <b>Repair</b> the broken resource in the terminal</div>
-          <div class="tstep">&#128273; <b>Recover</b> the CODE WORD it leaves behind</div>
-          <div class="tstep">&#128682; <b>Unlock</b> the next door and move deeper</div>
+          <div class="tstep">🔍 <b>Find</b> the hidden object in the scene</div>
+          <div class="tstep">📜 <b>Read</b> the failure and its Kubernetes clue</div>
+          <div class="tstep">🛠 <b>Repair</b> the broken resource in the terminal</div>
+          <div class="tstep">🔑 <b>Recover</b> the CODE WORD it leaves behind</div>
+          <div class="tstep">🚪 <b>Unlock</b> the next door and move deeper</div>
         </div></div>
     </section>
 
@@ -1383,38 +1660,38 @@
         </div>
         <div class="tdemo-stage">
           <div class="tdemo-step" id="tdA">
-            <div class="tdemo-label">&#128269; Step 1 &mdash; Find the object</div>
+            <div class="tdemo-label">🔍 Step 1 — Find the object</div>
             <div class="tdemo-num">Reception Desk</div>
             <div class="tmock-scene"><div class="troom"></div><div class="tmock-desk"></div>
               <div class="tmock-obj" id="tmockObj"><span class="tlbl">Investigate</span></div>
-              <div class="tcursor" id="tcursor"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M4 2l6 16 2.5-6.5L19 9z" fill="#eaf6ff" stroke="#04060a" stroke-width="1"/></svg></div>
+              <div class="tcursor" id="tcursor"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M4 2l6 16 2.5-6.5L19 9z" fill="#eaf6ff" stroke="#04060a" stroke-width="1"></path></svg></div>
             </div>
           </div>
           <div class="tdemo-step" id="tdB">
-            <div class="tdemo-label">&#128220; Step 2 &mdash; Read the failure</div>
+            <div class="tdemo-label">📜 Step 2 — Read the failure</div>
             <div class="tdemo-num">Kubernetes Context</div>
             <div class="tmock-modal"><div class="tmtag">Object Found: Service</div>
               <h4>Reception Terminal</h4><span class="tmbadge">v1/Service</span>
-              <p>The visitor routing system has failed. The pods are healthy, but the Service selector points to the wrong label &mdash; so traffic reaches no one. Fix the Service to restore the route.</p></div>
+              <p>The visitor routing system has failed. The pods are healthy, but the Service selector points to the wrong label — so traffic reaches no one. Fix the Service to restore the route.</p></div>
           </div>
           <div class="tdemo-step" id="tdC">
-            <div class="tdemo-label">&#128187; Step 3 &mdash; Repair in Killercoda</div>
+            <div class="tdemo-label">💻 Step 3 — Repair in Killercoda</div>
             <div class="tdemo-num">Terminal</div>
             <div class="tterm"><div class="ttbar"><span class="tdot"></span><span class="tdot"></span><span class="tdot"></span></div>
               <div class="tbody" id="ttermFix"></div></div>
           </div>
           <div class="tdemo-step" id="tdD">
-            <div class="tdemo-label">&#128273; Step 4 &mdash; Capture the CODE WORD</div>
+            <div class="tdemo-label">🔑 Step 4 — Capture the CODE WORD</div>
             <div class="tdemo-num">Terminal Output</div>
             <div class="tterm"><div class="ttbar"><span class="tdot"></span><span class="tdot"></span><span class="tdot"></span></div>
               <div class="tbody" id="ttermCode"></div></div>
           </div>
           <div class="tdemo-step" id="tdE">
-            <div class="tdemo-label">&#9000;&#65039; Step 5 &mdash; Enter it in the game</div>
+            <div class="tdemo-label">⌨️ Step 5 — Enter it in the game</div>
             <div class="tdemo-num">Browser Game</div>
             <div class="tentry"><div><div class="tcap">Enter Unlock Code</div>
               <div class="tfield" id="tmockField">&nbsp;</div>
-              <div class="tunlocked" id="tmockUnlocked">&#128682; Door Unlocked</div></div></div>
+              <div class="tunlocked" id="tmockUnlocked">🚪 Door Unlocked</div></div></div>
           </div>
         </div>
       </div>
@@ -1424,10 +1701,10 @@
       <div><div class="tk">Five Failures</div>
         <div class="tbig" style="font-size:clamp(24px,4.4vw,44px)">Descend through the dark</div>
         <div class="trooms" id="trooms">
-          <span class="tchip">SERVICE</span><span class="tarrow">&#10132;</span>
-          <span class="tchip">CONFIGMAP</span><span class="tarrow">&#10132;</span>
-          <span class="tchip">PVC</span><span class="tarrow">&#10132;</span>
-          <span class="tchip">SECRET</span><span class="tarrow">&#10132;</span>
+          <span class="tchip">SERVICE</span><span class="tarrow">➔</span>
+          <span class="tchip">CONFIGMAP</span><span class="tarrow">➔</span>
+          <span class="tchip">PVC</span><span class="tarrow">➔</span>
+          <span class="tchip">SECRET</span><span class="tarrow">➔</span>
           <span class="tchip">NETWORKPOLICY</span>
         </div>
         <div class="tln" style="margin-top:26px">Connectivity. Configuration. Storage.<br>Authentication. And the final gate.</div></div>
@@ -1437,12 +1714,13 @@
       <div><div class="tk" style="color:#4dffb5">Final Transmission</div>
         <div class="tbig">20 minutes.<br>One way out.<br><span class="grn">Fix everything.</span></div>
         <div class="tln" style="margin-top:22px">The clock starts the moment you enter.<br>Do not stop. Do not look back.</div>
-        <div style="margin-top:40px"><button class="tbtn" onclick="finishTutorial()">&#10094; Return to Main Menu</button></div></div>
+        <div style="margin-top:40px"><button class="tbtn" onclick="finishTutorial()">❮ Return to Main Menu</button></div></div>
     </section>
 
   </div>
-  <button class="tmute" id="tmuteBtn" onclick="tToggleMute()">&#128266; Sound On</button>
+  <button class="tmute" id="tmuteBtn" onclick="tToggleMute()">🔊 Sound On</button>
   <div class="tbar" id="tbar"></div>
 </div>
-</body>
-</html>
+
+
+</body></html>
