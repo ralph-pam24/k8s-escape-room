@@ -1175,7 +1175,6 @@
       }
     ];
     let current = 0, timeLeft = 1200, timerId = null, attempts = 0, completed = [], hintUsed = [false, false, false, false, false];
-    let audioCtx = null, masterGain = null, ambientNodes = [], audioEnabled = true;
     const $ = id => document.getElementById(id);
     function startGame() {
       if (localStorage.getItem('k8sTutorialWatched') !== 'yes') {
@@ -1258,6 +1257,8 @@
       }
       updateProgress();
       addDecoys();
+      const ambKeys=['reception','engineering','archive','vault','exit'];
+      ambience(ambKeys[current]);
     }
     function updateProgress() {
       for (let i = 0; i < 5; i++) {
@@ -1301,7 +1302,8 @@
       input.value = "";
       input.className = "unlock-input";
       input.disabled = false;
-      input.focus();
+      input.oninput = () => playFx('type');
+      input.focus();input.focus();
     }
     function closeModal() {
       $("modal").classList.remove("open");
@@ -1328,7 +1330,7 @@
         r.innerHTML = `<b>Reward Unlocked:</b><br>${s.reward}<br><br>
           <button class="btn" onclick="nextScenario()">${current === 4 ? "Open Final Exit Door" : "Proceed to Next Room \u2192"}</button>`;
       } else {
-        playFx("error");
+        playFx("deny");
         input.classList.add("wrong");
         fb.style.borderColor = "rgba(255,77,109,.35)";
         fb.style.color = "var(--red)";
@@ -1343,6 +1345,7 @@
       }
     });
     function nextScenario() {
+      playFx('transition');
       closeModal();
       if (current === 4) {
         clearInterval(timerId);
@@ -1350,6 +1353,8 @@
         $("game").style.display = "none";
         $("win").style.display = "grid";
         $("win").classList.add("active");
+        stopAmbience();
+        playFx('win');
         return;
       }
       current++;
@@ -1408,92 +1413,182 @@
       hotspot.style.height = `${height}%`;
       hotspot.addEventListener("click", () => {
         showMiss();
-        playError();
-      });
+      });      
       scene.appendChild(hotspot).appendChild(tip);
     }
-    function playError() {
-      const audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
-      audio.volume = 0.1;
-      audio.play().catch(() => {});
-    }
-    function initAudio() {
-      if (audioCtx || !audioEnabled) return;
-      try {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        masterGain = audioCtx.createGain();
-        masterGain.gain.value = 0.16;
-        masterGain.connect(audioCtx.destination);
-        const humGain = audioCtx.createGain();
-        humGain.gain.value = 0.05;
-        humGain.connect(masterGain);
-        const hum = audioCtx.createOscillator();
-        hum.type = 'sine';
-        hum.frequency.value = 48;
-        hum.connect(humGain);
-        hum.start();
-        const pulseGain = audioCtx.createGain();
-        pulseGain.gain.value = 0.018;
-        pulseGain.connect(masterGain);
-        const pulse = audioCtx.createOscillator();
-        pulse.type = 'triangle';
-        pulse.frequency.value = 96;
-        pulse.connect(pulseGain);
-        pulse.start();
-        ambientNodes = [hum, pulse, humGain, pulseGain];
-      } catch (e) {
-        audioEnabled = false;
-        const b = $('audio-toggle');
-        if (b) {
-          b.textContent = 'Audio N/A';
-          b.disabled = true;
-        }
+    
+
+    /* ================= SOUND ENGINE (ambience + SFX) ================= */
+    let AC=null, master=null, audioEnabled=true;
+    let ambNodes=[], ambTimers=[], currentAmb=null;
+
+    function initAudio(){
+      if(AC){ if(AC.state==='suspended') AC.resume(); return; }
+      try{
+        AC=new (window.AudioContext||window.webkitAudioContext)();
+        master=AC.createGain(); master.gain.value=audioEnabled?0.9:0; master.connect(AC.destination);
+      }catch(e){
+        audioEnabled=false;
+        const b=$('audio-toggle'); if(b){ b.textContent='Audio N/A'; b.disabled=true; }
       }
     }
-    function playFx(type) {
-      if (!audioEnabled) return;
-      if (!audioCtx) initAudio();
-      if (!audioCtx || audioCtx.state === 'closed') return;
-      try {
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        const o = audioCtx.createOscillator();
-        const g = audioCtx.createGain();
-        o.connect(g);
-        g.connect(masterGain || audioCtx.destination);
-        const now = audioCtx.currentTime;
-        let freq = 440, dur = .08, gain = .05, wave = 'sine';
-        if (type === 'hover') { freq = 520; dur = .035; gain = .025; wave = 'triangle'; }
-        if (type === 'hint') { freq = 330; dur = .12; gain = .045; wave = 'sine'; }
-        if (type === 'found') { freq = 660; dur = .16; gain = .06; wave = 'triangle'; }
-        if (type === 'success') { freq = 780; dur = .22; gain = .07; wave = 'sine'; }
-        if (type === 'error') { freq = 140; dur = .20; gain = .075; wave = 'sawtooth'; }
-        o.type = wave;
-        o.frequency.setValueAtTime(freq, now);
-        if (type === 'success') o.frequency.exponentialRampToValueAtTime(1040, now + dur);
-        if (type === 'error') o.frequency.exponentialRampToValueAtTime(90, now + dur);
-        g.gain.setValueAtTime(0.0001, now);
-        g.gain.exponentialRampToValueAtTime(gain, now + .01);
-        g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-        o.start(now);
-        o.stop(now + dur + .03);
-      } catch (e) {}
+    function aOsc(type,freq,dest){const o=AC.createOscillator();o.type=type;o.frequency.value=freq;if(dest)o.connect(dest);o.start();return o;}
+    function aGain(v,dest){const g=AC.createGain();g.gain.value=v;g.connect(dest||master);return g;}
+    function aNoise(dur){const b=AC.createBuffer(1,AC.sampleRate*dur,AC.sampleRate);const d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;return b;}
+    function aTone(wave,freq,dur,vol,when){const t=(when||AC.currentTime);const o=AC.createOscillator(),g=AC.createGain();o.type=wave;o.frequency.value=freq;g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);o.connect(g);g.connect(master);o.start(t);o.stop(t+dur+0.02);}
+    function aSweep(wave,f1,f2,dur,vol){const now=AC.currentTime;const o=AC.createOscillator(),g=AC.createGain();o.type=wave;o.frequency.setValueAtTime(f1,now);o.frequency.exponentialRampToValueAtTime(f2,now+dur);g.gain.setValueAtTime(0.0001,now);g.gain.exponentialRampToValueAtTime(vol,now+0.02);g.gain.exponentialRampToValueAtTime(0.0001,now+dur);o.connect(g);g.connect(master);o.start(now);o.stop(now+dur+0.03);}
+
+    function playFx(type){
+      if(!audioEnabled) return;
+      if(!AC) initAudio();
+      if(!AC||AC.state==='closed') return;
+      if(AC.state==='suspended') AC.resume();
+      try{
+        const now=AC.currentTime;
+        if(type==='hover'){ aTone('triangle',520,0.05,0.11); }
+        if(type==='found'){ aTone('triangle',660,0.12,0.10); aTone('sine',990,0.16,0.09,now+0.06); }
+        if(type==='error'||type==='miss'){ aSweep('sawtooth',180,90,0.22,0.09); }
+        if(type==='type'){ aTone('square',380+Math.random()*160,0.03,0.035); }
+        if(type==='success'||type==='unlock'){
+          aTone('sine',523,0.5,0.05); aTone('sine',659,0.5,0.05,now+0.02); aTone('sine',784,0.6,0.06,now+0.04);
+          const s=AC.createBufferSource();s.buffer=aNoise(0.15);const g=aGain(0.12);const bp=AC.createBiquadFilter();bp.type='bandpass';bp.frequency.value=1600;s.connect(bp);bp.connect(g);s.start(now+0.35);
+        }
+        if(type==='deny'){ aTone('square',160,0.14,0.08); aTone('square',120,0.2,0.08,now+0.12); }
+        if(type==='transition'){ aSweep('sine',300,760,0.5,0.13); }
+        if(type==='hint'){ aTone('sine',330,0.12,0.045); }
+        if(type==='win'){
+          [523,659,784,1047].forEach((f,i)=>aTone('triangle',f,0.4,0.07,now+i*0.14));
+          const s=AC.createBufferSource();s.buffer=aNoise(0.6);const g=aGain(0.04);const hp=AC.createBiquadFilter();hp.type='highpass';hp.frequency.value=3000;s.connect(hp);hp.connect(g);s.start(now+0.2);
+        }
+      }catch(e){}
     }
-    function toggleAudio() {
-      audioEnabled = !audioEnabled;
-      const b = $('audio-toggle');
-      if (!audioEnabled) {
-        try { if (masterGain) masterGain.gain.value = 0; } catch (e) {}
-        if (b) b.textContent = 'Audio Off';
+
+    function stopAmbience(){
+      ambTimers.forEach(t=>{clearInterval(t);clearTimeout(t);}); ambTimers=[];
+      const now=AC?AC.currentTime:0;
+      ambNodes.forEach(n=>{ try{ if(n.gain){n.gain.gain.setTargetAtTime(0,now,0.3);} if(n.stop){setTimeout(()=>{try{n.stop();}catch(e){}},400);} }catch(e){} });
+      ambNodes=[]; currentAmb=null;
+    }
+
+    function ambience(kind){
+      if(!audioEnabled) return;
+      if(!AC) initAudio();
+      if(!AC) return;
+      if(AC.state==='suspended') AC.resume();
+      if(currentAmb===kind) return;
+      stopAmbience(); currentAmb=kind;
+      const bed=aGain(0); bed.gain.setTargetAtTime(0.6,AC.currentTime,1.5);
+      ambNodes.push({gain:bed});
+
+      if(kind==='reception'){
+        const pad=aGain(0.0125,bed);
+        const a=aOsc('sine',330,pad);
+        const bg=aGain(0.5,pad); const b=aOsc('sine',495,bg);
+        const tg=aGain(0.008); const trem=AC.createOscillator(); trem.type='sine'; trem.frequency.value=0.2; trem.connect(tg); tg.connect(pad.gain); trem.start();
+        ambNodes.push(a,b,trem,{gain:pad},{gain:bg});
+        function phoneRing(){
+          const rg=aGain(0,bed);
+          const o1=AC.createOscillator(); o1.type='sine'; o1.frequency.value=440;
+          const o2=AC.createOscillator(); o2.type='sine'; o2.frequency.value=480;
+          o1.connect(rg); o2.connect(rg); o1.start(); o2.start();
+          const t0=AC.currentTime;
+          const env=(s,d)=>{ rg.gain.setValueAtTime(0.0001,s); rg.gain.exponentialRampToValueAtTime(0.06,s+0.03); rg.gain.setValueAtTime(0.06,s+d-0.03); rg.gain.exponentialRampToValueAtTime(0.0001,s+d); };
+          env(t0,0.4); env(t0+0.6,0.4);
+          setTimeout(()=>{ try{o1.stop();o2.stop();}catch(e){} },1200);
+        }
+        ambTimers.push(setTimeout(()=>{ phoneRing(); ambTimers.push(setInterval(phoneRing,9000)); },2000));
+      }
+
+      if(kind==='engineering'){
+        const s=AC.createBufferSource(); s.buffer=aNoise(2); s.loop=true;
+        const ng=aGain(0.024,bed); const bp=AC.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=1400; bp.Q.value=0.7;
+        s.connect(bp); bp.connect(ng); s.start();
+        const hg=aGain(0.030,bed); const hum=aOsc('triangle',220,hg);
+        ambNodes.push(s,hum,{gain:ng},{gain:hg});
+        ambTimers.push(setInterval(()=>{ const t=AC.currentTime; const o=AC.createOscillator(),gg=AC.createGain();o.type='square';o.frequency.value=1200;gg.gain.setValueAtTime(0.0001,t);gg.gain.exponentialRampToValueAtTime(0.034,t+0.005);gg.gain.exponentialRampToValueAtTime(0.0001,t+0.05);o.connect(gg);gg.connect(bed);o.start(t);o.stop(t+0.06); },1800));
+      }
+
+      if(kind==='archive'){
+        const rt=aGain(0.030,bed); const room=aOsc('sine',110,rt);
+        ambNodes.push(room,{gain:rt});
+        function whisper(){ const t=AC.currentTime; const dur=0.6+Math.random()*0.4;
+          const n=AC.createBufferSource(); n.buffer=aNoise(dur);
+          const g2=AC.createGain(); g2.gain.value=0.0001;
+          const bp=AC.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=1400+Math.random()*900; bp.Q.value=7;
+          n.connect(bp); bp.connect(g2); g2.connect(bed);
+          g2.gain.exponentialRampToValueAtTime(0.15,t+0.3); g2.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+          n.start(t); n.stop(t+dur+0.02);
+        }
+        ambTimers.push(setTimeout(()=>{ whisper(); ambTimers.push(setInterval(()=>{ if(Math.random()<0.55) whisper(); },4000)); },2000));
+      }
+
+      if(kind==='vault'){
+        const hb=aGain(1,bed);
+        function beat(){ const t=AC.currentTime;
+          const mk=(tt,v)=>{const o=AC.createOscillator(),gg=AC.createGain();o.type='sine';o.frequency.setValueAtTime(70,tt);o.frequency.exponentialRampToValueAtTime(40,tt+0.16);gg.gain.setValueAtTime(0.0001,tt);gg.gain.exponentialRampToValueAtTime(v,tt+0.02);gg.gain.exponentialRampToValueAtTime(0.0001,tt+0.22);o.connect(gg);gg.connect(hb);o.start(tt);o.stop(tt+0.3);};
+          mk(t,0.16); mk(t+0.28,0.11);
+        }
+        beat(); ambTimers.push(setInterval(beat,1500));
+        const wg=aGain(0.009,bed);
+        const w=AC.createOscillator(); w.type='sine'; w.frequency.value=1180;
+        const vib=AC.createOscillator(); vib.type='sine'; vib.frequency.value=5; const vibG=AC.createGain(); vibG.gain.value=14;
+        vib.connect(vibG); vibG.connect(w.frequency); w.connect(wg); w.start(); vib.start();
+        ambNodes.push({gain:hb},w,vib,{gain:wg});
+      }
+
+      if(kind==='exit'){
+        const rain=AC.createBufferSource(); rain.buffer=aNoise(3); rain.loop=true;
+        const rg=aGain(0.035,bed);
+        const rlp=AC.createBiquadFilter(); rlp.type='lowpass'; rlp.frequency.value=5000;
+        const rhp=AC.createBiquadFilter(); rhp.type='highpass'; rhp.frequency.value=1000;
+        rain.connect(rhp); rhp.connect(rlp); rlp.connect(rg); rain.start();
+        const rlfo=AC.createOscillator(); rlfo.type='sine'; rlfo.frequency.value=0.15;
+        const rlfoG=AC.createGain(); rlfoG.gain.value=0.01; rlfo.connect(rlfoG); rlfoG.connect(rg.gain); rlfo.start();
+        ambNodes.push(rain,rlfo,{gain:rg});
+        function thunder(){
+          const t=AC.currentTime;
+          const crk=AC.createBufferSource(); crk.buffer=aNoise(0.25);
+          const cg=AC.createGain(); cg.gain.setValueAtTime(0.0001,t); cg.gain.exponentialRampToValueAtTime(0.22,t+0.01); cg.gain.exponentialRampToValueAtTime(0.02,t+0.18);
+          const chp=AC.createBiquadFilter(); chp.type='highpass'; chp.frequency.value=600;
+          crk.connect(chp); chp.connect(cg); cg.connect(bed); crk.start(t); crk.stop(t+0.3);
+          [46,52,60].forEach((f,i)=>{
+            const o=AC.createOscillator(); o.type='sine';
+            o.frequency.setValueAtTime(f*1.4,t); o.frequency.exponentialRampToValueAtTime(f*0.6,t+3.2);
+            const og=AC.createGain(); og.gain.setValueAtTime(0.0001,t+i*0.05);
+            og.gain.exponentialRampToValueAtTime(0.10,t+0.25+i*0.05);
+            og.gain.exponentialRampToValueAtTime(0.0001,t+3.2);
+            o.connect(og); og.connect(bed); o.start(t); o.stop(t+3.4);
+          });
+          const roll=AC.createBufferSource(); roll.buffer=aNoise(3.2);
+          const rgn=AC.createGain(); rgn.gain.setValueAtTime(0.0001,t);
+          rgn.gain.exponentialRampToValueAtTime(0.12,t+0.3);
+          rgn.gain.exponentialRampToValueAtTime(0.04,t+1.6);
+          rgn.gain.exponentialRampToValueAtTime(0.0001,t+3.2);
+          const rlp2=AC.createBiquadFilter(); rlp2.type='lowpass'; rlp2.frequency.setValueAtTime(600,t); rlp2.frequency.exponentialRampToValueAtTime(180,t+3.0);
+          roll.connect(rlp2); rlp2.connect(rgn); rgn.connect(bed); roll.start(t); roll.stop(t+3.3);
+        }
+        function schedT(){ const wait=8000+Math.random()*5000; ambTimers.push(setTimeout(()=>{ thunder(); schedT(); },wait)); }
+        ambTimers.push(setTimeout(()=>{ thunder(); schedT(); },2000));
+      }
+    }
+
+    function toggleAudio(){
+      audioEnabled=!audioEnabled;
+      const b=$('audio-toggle');
+      if(!audioEnabled){
+        try{ if(master) master.gain.setTargetAtTime(0,AC.currentTime,0.15); }catch(e){}
+        if(b) b.textContent='Audio Off';
       } else {
         initAudio();
-        try {
-          if (masterGain) masterGain.gain.value = 0.16;
-          if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-        } catch (e) {}
-        if (b) b.textContent = 'Audio On';
+        try{ if(master) master.gain.setTargetAtTime(0.9,AC.currentTime,0.15);
+             if(AC&&AC.state==='suspended') AC.resume(); }catch(e){}
+        if(b) b.textContent='Audio On';
+        // resume the current room's ambience
+        const k=currentAmb; currentAmb=null; if(k) ambience(k);
         playFx('hint');
       }
     }
+
   /* ================= TUTORIAL GATING ================= */
   (function(){
     const watched = localStorage.getItem('k8sTutorialWatched') === 'yes';
