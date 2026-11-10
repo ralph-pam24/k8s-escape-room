@@ -1002,73 +1002,87 @@
     </div>
   </div>
   <section id="win" class="screen win">
-  <div class="win-card">
-  <div class="window">
-    <div class="titlebar">
-      <div class="titlebar-left">
-        <div class="titlebar-icon">▲</div>
-        <div class="titlebar-title">Results</div>
-      </div>
-    </div>
-    <div class="subheader">
-      <div class="tab-strip">
-        <span class="tab-key">L1</span>
-        <span class="tab-active">Game</span>
-        <span class="tab-key">R1</span>
-      </div>
-      <span class="eyebrow">K8S ESCAPE COMPLEX</span>
-    </div>
-    <div class="split">
-      <div class="col-left">
-        <p class="kicker">Development team</p>
-        <h1>Credits</h1>
-        <div class="rows">
-          <div class="row">
-            <span class="row-label">Proof of Concept</span>
-            <span class="pill">Alvin J.</span>
-          </div>
-          <div class="row">
-            <span class="row-label">Game Architecture and Full Stack Lead</span>
-            <span class="pill">Ralph P.</span>
-          </div>
-          <div class="row">
-            <span class="row-label">Game Design &amp; Full Stack Support</span>
-            <span class="pill">Rachel L.</span>
-          </div>
-          <div class="row">
-            <span class="row-label">Development Powered by AI</span>
-            <span class="pill model">GPT Models</span>
-          </div>
-          <div class="row">
-            <span class="row-label">Special Thanks</span>
-            <span class="pill">AF — Coding Consultant</span>
+    <div class="win-card">
+      <div class="window">
+        <div class="titlebar">
+          <div class="titlebar-left">
+            <div class="titlebar-icon">▲</div>
+            <div class="titlebar-title">Results</div>
           </div>
         </div>
-      </div>
-      <div class="col-right">
-        <p class="eyebrow">ALL SYSTEMS RESTORED</p>
-        <h1 class="summary-title">You Escaped the Kubernetes Facility</h1>
-        <p class="summary-desc">The final exit door is unlocked. The cluster has been restored through Service, ConfigMap, PVC, Secret, and NetworkPolicy troubleshooting.</p>
-        <table class="map-table">
-          <thead>
-            <tr><th>Object</th><th>K8s resource</th><th>Concept</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Reception Access Card</td><td>Service</td><td>Traffic routing with selectors</td></tr>
-            <tr><td>Facility Blueprint</td><td>ConfigMap</td><td>Application configuration</td></tr>
-            <tr><td>Storage Expansion Plan</td><td>PVC</td><td>Persistent storage capacity</td></tr>
-            <tr><td>Level 5 Security Badge</td><td>Secret</td><td>Sensitive credentials</td></tr>
-            <tr><td>Security Gate Door</td><td>NetworkPolicy</td><td>Pod communication control</td></tr>
-          </tbody>
-        </table>
-        <button class="btn" onclick="location.reload()">PLAY AGAIN</button>
+
+        <div class="subheader">
+          <div class="tab-strip">
+            <span class="tab-key">L1</span>
+            <span class="tab-active">Game</span>
+            <span class="tab-key">R1</span>
+          </div>
+          <span class="eyebrow">K8S ESCAPE COMPLEX</span>
+        </div>
+
+        <div class="split">
+          <div class="col-left">
+            <p class="kicker">Development team</p>
+            <h1>Credits</h1>
+            <div class="rows">
+              <div class="row">
+                <span class="row-label">Proof of Concept</span>
+                <span class="pill">Alvin Jaramillo</span>
+              </div>
+              <div class="row">
+                <span class="row-label">Game Architecture and Full Stack Lead</span>
+                <span class="pill">Ralph Pamintuan</span>
+              </div>
+              <div class="row">
+                <span class="row-label">Game Design &amp; Full Stack Support</span>
+                <span class="pill">Rachel Loquillano</span>
+              </div>
+              <div class="row">
+                <span class="row-label">Development Powered by AI</span>
+                <span class="pill model">GPT Models</span>
+              </div>
+              <div class="row">
+                <span class="row-label">Special Thanks</span>
+                <span class="pill">AF — Coding Consultant</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-right">
+            <p class="status-line">ALL SYSTEMS RESTORED</p>
+            <h1 class="summary-title">You Escaped the Kubernetes Facility</h1>
+            <p class="summary-desc">The final exit door is unlocked. The cluster has been restored through Service, ConfigMap, PVC, Secret, and NetworkPolicy troubleshooting.</p>
+
+            <div style="margin:20px 0;padding:16px 18px;border:1px solid rgba(77,255,181,.35);background:rgba(77,255,181,.06);">
+              <p class="status-line" style="margin-bottom:12px">ESCAPE RESULT</p>
+              <div style="display:grid;grid-template-columns:150px 1fr;gap:8px 16px;color:var(--win-muted);font-family:var(--win-mono);">
+                <strong>Escape Time</strong><span id="result-time">--</span>
+                <strong>Attempt</strong><span id="result-attempt">--</span>
+              </div>
+            </div>
+
+            <table class="map-table">
+              <thead>
+                <tr><th>Object</th><th>K8s resource</th><th>Concept</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Reception Access Card</td><td>Service</td><td>Traffic routing with selectors</td></tr>
+                <tr><td>Facility Blueprint</td><td>ConfigMap</td><td>Application configuration</td></tr>
+                <tr><td>Storage Expansion Plan</td><td>PVC</td><td>Persistent storage capacity</td></tr>
+                <tr><td>Level 5 Security Badge</td><td>Secret</td><td>Sensitive credentials</td></tr>
+                <tr><td>Security Gate Door</td><td>NetworkPolicy</td><td>Pod communication control</td></tr>
+              </tbody>
+            </table>
+
+            <button class="play-again" onclick="stopCreditsMusic(); location.reload();">PLAY AGAIN</button>
+          </div>
+        </div>
+
+        <div class="footer">
+          <span>Developed for <strong>Cloud Migration Factory (CMF)</strong></span>
+        </div>
       </div>
     </div>
-    <div class="footer">
-      <span>Developed for <strong>Cloud Migration Factory (CMF)</strong></span>
-    </div>
-  </div>
-  </div>
   </section>
   <script>
     const scenarios = [
@@ -1175,6 +1189,90 @@
       }
     ];
     let current = 0, timeLeft = 1200, timerId = null, attempts = 0, completed = [], hintUsed = [false, false, false, false, false];
+    /* ================= PLAYER RUN TRACKING ================= */
+
+    const RUN_LIMIT_SECONDS = 1200; // 20 minutes
+
+    function generateRunId() {
+      const part1 = Math.random().toString(16).substring(2, 6).toUpperCase();
+      const part2 = Math.random().toString(16).substring(2, 6).toUpperCase();
+
+      return `${part1}-${part2}`;
+    }
+
+    function getAttemptCount() {
+      return Number(localStorage.getItem("k8sAttemptCount") || "0");
+    }
+
+    function getActiveRun() {
+      return localStorage.getItem("k8sRunActive") === "yes";
+    }
+
+    function beginPlayerRun() {
+
+      /* A refresh does NOT create another attempt */
+      if (getActiveRun()) {
+        return;
+      }
+
+      const attempt = getAttemptCount() + 1;
+
+      localStorage.setItem("k8sAttemptCount", String(attempt));
+      localStorage.setItem("k8sRunStart", String(Date.now()));
+      localStorage.setItem("k8sRunId", generateRunId());
+      localStorage.setItem("k8sRunActive", "yes");
+    }
+
+    function getElapsedSeconds() {
+      const start = Number(localStorage.getItem("k8sRunStart"));
+
+      if (!start) {
+        return 0;
+      }
+
+      return Math.max(
+        0,
+        Math.floor((Date.now() - start) / 1000)
+      );
+    }
+
+    function formatElapsedTime(seconds) {
+
+      const minutes = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+
+      return `${String(minutes).padStart(2, "0")}m ${String(secs).padStart(2, "0")}s`;
+    }
+    function completePlayerRun() {
+      const elapsed = getElapsedSeconds();
+      const attempt = getAttemptCount();
+      const runId = localStorage.getItem("k8sRunId") || "UNKNOWN";
+
+      localStorage.setItem("k8sLastEscapeTime", String(elapsed));
+      localStorage.setItem("k8sLastAttempt", String(attempt));
+      localStorage.setItem("k8sLastRunId", runId);
+      localStorage.setItem("k8sRunActive", "no");
+
+      return {
+        elapsed,
+        attempt,
+        runId,
+        eligible: attempt === 1
+      };
+    }
+
+function showPlayerResult(result) {
+  const timeEl = document.getElementById("result-time");
+  const attemptEl = document.getElementById("result-attempt");
+
+  if (timeEl) {
+    timeEl.textContent = formatElapsedTime(result.elapsed);
+  }
+
+  if (attemptEl) {
+    attemptEl.textContent = result.attempt;
+  }
+}
     const $ = id => document.getElementById(id);
     function startGame() {
       if (localStorage.getItem('k8sTutorialWatched') !== 'yes') {
@@ -1189,6 +1287,16 @@
         }
         return; // block entry until tutorial is watched
       }
+
+      beginPlayerRun();
+
+      const elapsed = getElapsedSeconds();
+
+      timeLeft = Math.max(
+        0,
+        RUN_LIMIT_SECONDS - elapsed
+      );
+
       $("intro").classList.remove("active");
       $("intro").style.display = "none";
       $("game").style.display = "block";
@@ -1196,7 +1304,6 @@
       completed = [];
       hintUsed = [false, false, false, false, false];
       current = 0;
-      timeLeft = 1200;
       attempts = 0;
       buildInventory();
       buildProgress();
@@ -1209,11 +1316,16 @@
       const m = String(Math.floor(timeLeft / 60)).padStart(2, "0"),
         s = String(timeLeft % 60).padStart(2, "0");
       $("timer").textContent = m + ":" + s;
-      if (timeLeft <= 0) {
-        clearInterval(timerId);
-        alert("Time expired. Restart the game to try again.");
-        location.reload();
-      }
+    if (timeLeft <= 0) {
+      clearInterval(timerId);
+
+      // Close the current attempt.
+      // The next Enter Facility starts the next attempt number.
+      localStorage.setItem("k8sRunActive", "no");
+
+  alert("Time expired. Restart the game to try again.");
+  location.reload();
+}
     }
     function buildInventory() {
       $("inventory").innerHTML = "";
@@ -1303,7 +1415,7 @@
       input.className = "unlock-input";
       input.disabled = false;
       input.oninput = () => playFx('type');
-      input.focus();input.focus();
+      input.focus();
     }
     function closeModal() {
       $("modal").classList.remove("open");
@@ -1347,21 +1459,26 @@
     function nextScenario() {
       playFx('transition');
       closeModal();
+
       if (current === 4) {
         clearInterval(timerId);
+        const result = completePlayerRun();
+
         $("game").classList.remove("active");
         $("game").style.display = "none";
         $("win").style.display = "grid";
         $("win").classList.add("active");
+
+        showPlayerResult(result);
         stopAmbience();
         playFx('win');
 
-        setTimeout(()=>{
+        setTimeout(() => {
           playCreditsMusic();
-        },1000);
-
-return;
+        }, 1000);
+        return;
       }
+
       current++;
       loadScenario();
     }
